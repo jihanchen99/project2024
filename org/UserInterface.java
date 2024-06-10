@@ -33,7 +33,7 @@ public class UserInterface {
             System.out.println("Enter 'q' or 'quit' to exit");
 
             String input = in.nextLine();
-            if (input.equals('q') || input.equals("quit")) {
+            if (input.equals("q") || input.equals("quit")) {
                 break;
             }
 
