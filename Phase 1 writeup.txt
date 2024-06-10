@@ -1,0 +1,29 @@
+Phase 1 Writeup
+
+I. Additional Tasks for Grading: 1.8, 1.9. 1.10
+
+II. Code Change Description:
+
+Task 1.1
+
+Task 1.2
+
+Task 1.3
+Added if loops and try-catch blocks to handle input error handling in UserInterface.start().
+Added print statement to notify user of error and re-prompt user for new inputs.
+
+Task 1.4
+
+Task 1.8
+Put existing code in a while loop so that we can restart the loop if user enters invalid
+input. Used if loops to filter invalid user inputs and restart the user interaction with
+re-prompt messages.
+
+Task 1.9
+
+Task 1.10
+
+III. Team Contribution
+Jihan Chen: 1.3, 1.8
+Frank Liu:
+Yuhan Zhang:

@@ -1,3 +1,5 @@
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
 
@@ -90,7 +92,7 @@ public class UserInterface {
         }
     }
 
-
+/*
     public void displayFund(int fundNumber) {
 
         Fund fund = org.getFunds().get(fundNumber - 1);
@@ -113,8 +115,43 @@ public class UserInterface {
 
 
     }
+    
+  */
 
+	// task 4+10
+	public void displayFund(int fundNumber) {
+		Fund fund = org.getFunds().get(fundNumber - 1);
+		
+		System.out.println("\n\n");
+		System.out.println("Here is information about this fund:");
+		System.out.println("Name: " + fund.getName());
+		System.out.println("Description: " + fund.getDescription());
+		System.out.println("Target: $" + fund.getTarget());
+		
+		List<Donation> donations = fund.getDonations();
+		System.out.println("Number of donations: " + donations.size());
+	
+		long totalDonations = 0;
+		//task 10
+		DateTimeFormatter inputFormatter = DateTimeFormatter.ISO_DATE_TIME;
+		DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy");
+		
+		// task 4
+		for (Donation donation : donations) {
+			totalDonations += donation.getAmount();
+			ZonedDateTime parsedDate = ZonedDateTime.parse(donation.getDate(), inputFormatter);
+			String formattedDate = parsedDate.format(outputFormatter);
+			System.out.println("* " + donation.getContributorName() + ": $" + donation.getAmount() + " on " + formattedDate);
+		}
+	
+		double percentageOfTarget = (double) totalDonations / fund.getTarget() * 100;
+		System.out.printf("Total donation amount: $%d (%.2f%% of target)\n", totalDonations, percentageOfTarget);
+	
+		System.out.println("Press the Enter key to go back to the listing of funds");
+		in.nextLine();
+	}
 
+    
     public static void main(String[] args) {
 
         DataManager ds = new DataManager(new WebClient("localhost", 3001));
