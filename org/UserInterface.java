@@ -30,13 +30,24 @@ public class UserInterface {
 				System.out.println("Enter the fund number to see more information.");
 			}
 			System.out.println("Enter 0 to create a new fund");
-			int option = in.nextInt();
-			in.nextLine();
-			if (option == 0) {
-				createFund(); 
+			System.out.println("Enter 'q' or 'quit' to exit");
+
+			String input = in.nextLine();
+			if (input.equals('q') || input.equals("quit")) {
+				break;
 			}
-			else {
-				displayFund(option);
+
+			try{
+				int option = Integer.parseInt(input);
+				if (option < 0 || option > org.getFunds().size()) {
+					System.out.println("The fund number is out of range.");
+				} else if (option == 0) {
+					createFund();
+				} else {
+					displayFund(option);
+				}
+			} catch (NumberFormatException e) {
+				System.out.println("Input must be a numeric value.");
 			}
 		}			
 			
