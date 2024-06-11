@@ -36,6 +36,7 @@ public class UserInterface {
 
             String input = in.nextLine();
             if (input.equals("q") || input.equals("quit")) {
+                System.out.println("Good bye!");
                 break;
             }
 
