@@ -158,10 +158,12 @@ public class UserInterface {
 
         String login = args[0];
         String password = args[1];
-
-
-        Organization org = ds.attemptLogin(login, password);
-
+        Organization org = null;
+        try {
+            org = ds.attemptLogin(login, password);
+        }catch (IllegalStateException e){
+            System.out.println("Error in communicating with server");
+        }
         if (org == null) {
             System.out.println("Login failed.");
         } else {
