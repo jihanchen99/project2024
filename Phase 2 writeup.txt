@@ -1,0 +1,48 @@
+Phase 1 Writeup
+
+I. Additional Tasks for Grading: 1.8, 1.9. 1.10
+
+II. Code Change Description:
+
+Task 1.1
+Added more unit tests in the DataManager.createFund method, created separate JUnit test
+classes in the DataManager’s attemptLogin and getContributorName methods, achieving 100%
+statement coverage in all those three methods.
+
+Task 1.2
+There are spelling errors in DataManager class. I fixed the error in "get("description")
+in "String description = (String)data.get("description");", as well as change "Contributr"
+to "Contributor" in "String response = client.makeRequest("/findContributorNameById", map);"
+by using JUnit test and finding that the assert results are not equal to expected results.
+
+Task 1.3
+Added if loops and try-catch blocks to handle input error handling in UserInterface.start().
+Added print statement to notify user of error and re-prompt user for new inputs.
+
+Task 1.4
+The total amount donated is calculated by summing up the amounts from each donation.
+The percentage of the target is calculated by the total donations / the target amount.
+
+Task 1.8
+Put existing code in a while loop so that we can restart the loop if user enters invalid
+input. Used if loops to filter invalid user inputs and restart the user interaction with
+re-prompt messages.
+
+Task 1.9
+Modified the DataManager.attemptLogin() so that it throws an IllegalStateException when
+"status" is not "success", which occurs when error occurs while communicating with the
+server, and modified UserInterface.main() by adding try-catch command. If an exception
+was caught, it displays “Error in communicating with server” in this case but still
+shows “Login fails” with username/password combination errors.
+
+Task 1.10
+The date is parsed using DateTimeFormatter.ISO_DATE_TIME and 
+formatted using DateTimeFormatter.ofPattern("MMMM dd, yyyy"). 
+The new date will be displayed in a format like "June 18, 2021."
+
+
+
+III. Team Contribution
+Jihan Chen: 1.3, 1.8
+Frank Liu:  1.4, 1.10
+Yuhan Zhang: 1.1, 1.2, 1.9

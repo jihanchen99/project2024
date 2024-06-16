@@ -1,7 +1,12 @@
 import java.time.ZonedDateTime;
+import java.util.Map;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class UserInterface {
 
@@ -32,12 +37,18 @@ public class UserInterface {
                 System.out.println("Enter the fund number to see more information.");
             }
             System.out.println("Enter 0 to create a new fund");
+            // task 2.9
+            System.out.println("Enter 'a' to view all contributions across all funds.");
             System.out.println("Enter 'q' or 'quit' to exit");
+            
 
             String input = in.nextLine();
             if (input.equals("q") || input.equals("quit")) {
                 System.out.println("Good bye!");
                 break;
+            } else if (input.equalsIgnoreCase("a")) {
+                displayAllContributions();
+                continue;
             }
 
             try {
@@ -56,6 +67,8 @@ public class UserInterface {
 
     }
 
+    
+    
     public void createFund() {
         while (true) {
             System.out.print("Enter the fund name: ");
@@ -93,32 +106,57 @@ public class UserInterface {
         }
     }
 
-/*
-    public void displayFund(int fundNumber) {
+    private void waitForEnter() {
+        System.out.println("Press the Enter key to go back to the listing of funds.");
+        in.nextLine();  
+    }
+    private void displayAllContributions() {
+        System.out.println("\nAll Contributions Across All Funds:");
 
-        Fund fund = org.getFunds().get(fundNumber - 1);
-
-        System.out.println("\n\n");
-        System.out.println("Here is information about this fund:");
-        System.out.println("Name: " + fund.getName());
-        System.out.println("Description: " + fund.getDescription());
-        System.out.println("Target: $" + fund.getTarget());
-
-        List<Donation> donations = fund.getDonations();
-        System.out.println("Number of donations: " + donations.size());
-        for (Donation donation : donations) {
-            System.out.println("* " + donation.getContributorName() + ": $" + donation.getAmount() + " on " + donation.getDate());
+        List<Donation> allDonations = new ArrayList<>();
+        for (Fund fund : org.getFunds()) {
+            allDonations.addAll(fund.getDonations());
         }
 
+        // Sort
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ISO_DATE_TIME;
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy");
 
-        System.out.println("Press the Enter key to go back to the listing of funds");
-        in.nextLine();
-
-
+        allDonations.sort((d1, d2) -> {
+            ZonedDateTime date1 = ZonedDateTime.parse(d1.getDate(), inputFormatter);
+            ZonedDateTime date2 = ZonedDateTime.parse(d2.getDate(), inputFormatter);
+            return date2.compareTo(date1);
+        });
+        for (Donation donation : allDonations) {
+            ZonedDateTime parsedDate = ZonedDateTime.parse(donation.getDate(), inputFormatter);
+            String formattedDate = parsedDate.format(outputFormatter);
+            System.out.println("Fund: " + donation.getFundId() + ", Amount: $" + donation.getAmount() + ", Date: " + formattedDate);
+        }
+        waitForEnter();
     }
     
-  */
 
+    
+//    // task 2.3
+//    private void calculateAggregates(Fund fund) {
+//        if (!fund.getAggregatedDonations().isEmpty()) return; // Already calculated
+//
+//        List<Donation> donations = fund.getDonations();
+//        Map<String, AggregateDonation> aggregated = new HashMap<>();
+//
+//        for (Donation donation :2 donations) {
+//            AggregateDonation agg = aggregated.getOrDefault(donation.getContributorName(),
+//                new AggregateDonation(0, 0));
+//            agg.incrementCount();
+//            agg.addToTotal(donation.getAmount());
+//            aggregated.put(donation.getContributorName(), agg);
+//        }
+//
+//        fund.getAggregatedDonations().putAll(aggregated);
+//    }
+//    
+    
+  /*
 	// task 4+10
 	public void displayFund(int fundNumber) {
 		Fund fund = org.getFunds().get(fundNumber - 1);
@@ -152,6 +190,58 @@ public class UserInterface {
 		in.nextLine();
 	}
 
+    */
+    
+    public void displayFund(int fundNumber) {
+        Fund fund = org.getFunds().get(fundNumber - 1);
+
+        System.out.println("\n\n");
+        System.out.println("Here is information about this fund:");
+        System.out.println("Name: " + fund.getName());
+        System.out.println("Description: " + fund.getDescription());
+        System.out.println("Target: $" + fund.getTarget());
+
+        List<Donation> donations = fund.getDonations();
+        System.out.println("Number of donations: " + donations.size());
+
+        System.out.println("Choose display option: (1) Individual Donations (2) Aggregated Donations");
+        int displayOption = in.nextInt();
+        in.nextLine();
+
+        long totalDonations = 0;
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ISO_DATE_TIME;
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy");
+
+        if (displayOption == 1) {
+            // original code
+    		for (Donation donation : donations) {
+    			totalDonations += donation.getAmount();
+    			ZonedDateTime parsedDate = ZonedDateTime.parse(donation.getDate(), inputFormatter);
+    			String formattedDate = parsedDate.format(outputFormatter);
+    			System.out.println("* " + donation.getContributorName() + ": $" + donation.getAmount() + " on " + formattedDate);
+    		}
+        } else if (displayOption == 2) {
+            Map<String, AggregateDonation> aggregates = fund.getAggregatedDonations();
+
+            // Create a stream and sort in descending order
+            Stream<Map.Entry<String, AggregateDonation>> sortedAggregatesStream = aggregates.entrySet().stream()
+                .sorted(Map.Entry.<String, AggregateDonation>comparingByValue((a, b) -> Long.compare(b.getTotal(), a.getTotal())));
+
+            List<Map.Entry<String, AggregateDonation>> sortedAggregates = sortedAggregatesStream.collect(Collectors.toList());
+
+            for (Map.Entry<String, AggregateDonation> entry : sortedAggregates) {
+                System.out.println(entry.getKey() + ", " + entry.getValue().getCount() + " donations, $" + entry.getValue().getTotal() + " total");
+                totalDonations += entry.getValue().getTotal();
+            }
+        }
+
+        double percentageOfTarget = (double) totalDonations / fund.getTarget() * 100;
+        System.out.printf("Total donation amount: $%d (%.2f%% of target)\n", totalDonations, percentageOfTarget);
+
+        System.out.println("Press the Enter key to go back to the listing of funds");
+        in.nextLine();
+    }
+    
     
     public static void main(String[] args) {
 

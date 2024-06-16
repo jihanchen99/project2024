@@ -5,3 +5,17 @@
 /Organization.class
 /UserInterface.class
 /WebClient.class
+/DataManager_attemptLogin_Test.class
+/DataManager_getContributorName_Test.class
+/DataManager_attemptLogin_Test$1.class
+/DataManager_attemptLogin_Test$2.class
+/DataManager_attemptLogin_Test$3.class
+/DataManager_attemptLogin_Test$4.class
+/DataManager_createFund_Test$1.class
+/DataManager_createFund_Test$2.class
+/DataManager_createFund_Test$3.class
+/DataManager_getContributorName_Test$1.class
+/DataManager_getContributorName_Test$2.class
+/DataManager_getContributorName_Test$3.class
+/DataManager_getContributorName_Test$4.class
+/AggregateDonation.class
