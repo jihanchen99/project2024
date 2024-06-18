@@ -183,5 +183,30 @@ public class DataManager {
 		}	
 	}
 
+	// Task 2.7
+	public boolean deleteFund(String fundID) {
+		if (fundID == null) {
+			throw new IllegalArgumentException();
+		}
+		try{
+			Map<String, Object> map = new HashMap<>();
+			map.put("id", fundID);
+			String response = client.makeRequest("/deleteFund", map);
+			if (response == null) {
+				throw new IllegalStateException();
+			} else if (response == "{\"status\":\"error\",\"error\":\"An unexpected database error occurred\"}") {
+				throw new IllegalStateException();
+			} else if (response == "I AM NOT JSON!") {
+				throw new IllegalStateException();
+			}
+			JSONParser parser = new JSONParser();
+			JSONObject json = (JSONObject) parser.parse(response);
+			String status = (String)json.get("status");
+			return status.equals("success");
+		} catch (Exception e) {
+			throw new IllegalStateException("Error in communicating with server", e);
+		}
+	}
+
 
 }

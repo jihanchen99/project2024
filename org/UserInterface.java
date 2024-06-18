@@ -164,7 +164,7 @@ public class UserInterface {
         List<Donation> donations = fund.getDonations();
         System.out.println("Number of donations: " + donations.size());
 
-        System.out.println("Choose display option: (1) Individual Donations (2) Aggregated Donations");
+        System.out.println("Choose display option: (1) Individual Donations (2) Aggregated Donations (3) Delete This Fund");
         int displayOption = in.nextInt();
         in.nextLine();
 
@@ -193,6 +193,15 @@ public class UserInterface {
                 System.out.println(entry.getKey() + ", " + entry.getValue().getCount() + " donations, $" + entry.getValue().getTotal() + " total");
                 totalDonations += entry.getValue().getTotal();
             }
+        } else if (displayOption == 3) {
+            System.out.println("Are you sure you want to delete this fund? Yes/No: ");
+            String confirmation = in.nextLine();
+            if (confirmation.equalsIgnoreCase("yes")) {
+                deleteFund(fundNumber);
+            } else {
+                System.out.println("Deletion of fund cancelled.");
+            }
+
         }
 
         double percentageOfTarget = (double) totalDonations / fund.getTarget() * 100;
@@ -200,6 +209,17 @@ public class UserInterface {
 
         System.out.println("Press the Enter key to go back to the listing of funds");
         in.nextLine();
+    }
+
+    public void deleteFund(int fundNumber) {
+        Fund fundToDelete = org.getFunds().get(fundNumber - 1);
+        boolean success = dataManager.deleteFund(fundToDelete.getId());
+        if (success) {
+            org.getFunds().remove(fundToDelete);
+            System.out.println("Fund deleted successfully!");
+        } else {
+            System.out.println("Failed to delete the fund.");
+        }
     }
 
     private void loginUI() {
