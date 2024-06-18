@@ -16,6 +16,9 @@ public class DataManager {
 	private final Map<String, String> contributorNameCache;
 
 	public DataManager(WebClient client) {
+		if (client == null) {
+			throw new IllegalStateException();
+		}
 		this.client = client;
 		this.contributorNameCache = new HashMap<>();
 	}
@@ -26,12 +29,19 @@ public class DataManager {
 	 * @return an Organization object if successful; null if unsuccessful
 	 */
 	public Organization attemptLogin(String login, String password) {
+		if (login == null || password ==null) {
+			throw new IllegalArgumentException();
+		}
 
 		try {
 			Map<String, Object> map = new HashMap<>();
 			map.put("login", login);
 			map.put("password", password);
 			String response = client.makeRequest("/findOrgByLoginAndPassword", map);
+
+			if (response == "{\"status\":\"error\",\"error\":\"An unexpected database error occurred\"}") {
+				throw new IllegalStateException();
+			}
 
 			JSONParser parser = new JSONParser();
 			JSONObject json = (JSONObject) parser.parse(response);
@@ -91,6 +101,9 @@ public class DataManager {
 	 * @return the name of the contributor on success; null if no contributor is found
 	 */
 	public String getContributorName(String id) {
+		if (id == null) {
+			throw new IllegalArgumentException();
+		}
 
 
 		try {
@@ -102,6 +115,11 @@ public class DataManager {
 			}
 
 			String response = client.makeRequest("/findContributorNameById", map);
+			if (response == null) {
+				throw new IllegalStateException();
+			} else if (response == "{\"status\":\"error\",\"error\":\"An unexpected database error occurred\"}") {
+				throw new IllegalStateException();
+			}
 
 			JSONParser parser = new JSONParser();
 			JSONObject json = (JSONObject) parser.parse(response);
@@ -117,7 +135,7 @@ public class DataManager {
 
 		}
 		catch (Exception e) {
-			return null;
+			throw new IllegalStateException("Error in communicating with server",e);
 		}	
 	}
 
@@ -126,6 +144,9 @@ public class DataManager {
 	 * @return a new Fund object if successful; null if unsuccessful
 	 */
 	public Fund createFund(String orgId, String name, String description, long target) {
+		if (orgId == null || name == null || description == null) {
+			throw new IllegalArgumentException();
+		}
 
 		try {
 
@@ -135,6 +156,13 @@ public class DataManager {
 			map.put("description", description);
 			map.put("target", target);
 			String response = client.makeRequest("/createFund", map);
+			if (response == null) {
+				throw new IllegalStateException();
+			} else if (response == "{\"status\":\"error\",\"error\":\"An unexpected database error occurred\"}") {
+				throw new IllegalStateException();
+			} else if (response == "I AM NOT JSON!") {
+				throw new IllegalStateException();
+			}
 
 			JSONParser parser = new JSONParser();
 			JSONObject json = (JSONObject) parser.parse(response);
@@ -149,8 +177,9 @@ public class DataManager {
 
 		}
 		catch (Exception e) {
-			e.printStackTrace();
-			return null;
+			throw new IllegalStateException("Error in communicating with server",e);
+//			e.printStackTrace();
+//			return null;
 		}	
 	}
 

@@ -1,6 +1,6 @@
 Phase 2 Writeup
 
-I. Additional Tasks for Grading: 
+I. Additional Tasks for Grading: 2.7, 2.8, 2.9
 
 II. Code Change Description:
 
@@ -9,16 +9,23 @@ Task 2.1
 
 Task 2.2
 
+
 Task 2.3
 Modified the fund class with a new AggregateFund class to calculate and store aggregated fund.
 
+Task 2.7
+
+
+Task 2.8
+
 
 Task 2.9
-modified the start() method in the UI to include the view all contribution option. Modified the displayfund method for the view all option.
+Modified the start() method in the UI to include the view all contribution option.
+Modified the displayfund method for the view all option.
 
 
 
 III. Team Contribution
-Jihan Chen: 
+Jihan Chen: 2.2, 2.7
 Frank Liu:  2.3, 2.9
-Yuhan Zhang: 
+Yuhan Zhang: 2.1, 2.8

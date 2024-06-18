@@ -111,6 +111,7 @@ public class UserInterface {
                     }
 
                     Fund fund = dataManager.createFund(org.getId(), name, description, target);
+                    // task 2.2: do something here?
                     org.getFunds().add(fund);
                     System.out.println("Fund created successfully!");
                     return;
@@ -217,6 +218,7 @@ public class UserInterface {
         Organization org = null;
         try {
             org = ds.attemptLogin(login, password);
+            // Task 2.2: do sth here?
         } catch (IllegalStateException e) {
             System.out.println("Error in communicating with server");
         }

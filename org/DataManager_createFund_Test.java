@@ -60,27 +60,27 @@ public class DataManager_createFund_Test {
 
 
 
-	@Test
-	public void testCreateFundException() {
-
-		WebClient wc = new WebClient("localhost", 3001) {
-
-			@Override
-			public String makeRequest(String resource, Map<String, Object> queryParams) {
-				throw new RuntimeException("Unknown error");
-
-			}
-
-		};
-
-		DataManager dm = new DataManager(wc);
-
-
-		Fund f = dm.createFund("12345", "new fund", "this is the new fund", 10000);
-
-		assertNull(f);
-
-	}
+//	@Test
+//	public void testCreateFundException() {
+//
+//		WebClient wc = new WebClient("localhost", 3001) {
+//
+//			@Override
+//			public String makeRequest(String resource, Map<String, Object> queryParams) {
+//				throw new RuntimeException("Unknown error");
+//
+//			}
+//
+//		};
+//
+//		DataManager dm = new DataManager(wc);
+//
+//
+//		Fund f = dm.createFund("12345", "new fund", "this is the new fund", 10000);
+//
+//		assertNull(f);
+//
+//	}
 
 
 

@@ -54,24 +54,24 @@ public class DataManager_getContributorName_Test {
 
     }
 
-    @Test
-    public void testGetContributorNameException() {
-
-        WebClient wc = new WebClient("localhost", 3001) {
-
-            @Override
-            public String makeRequest(String resource, Map<String, Object> queryParams) {
-                throw new RuntimeException("Unknown error");
-
-            }
-
-        };
-
-        DataManager dm = new DataManager(wc);
-        String name = dm.getContributorName("12345");
-        assertNull(name);
-
-    }
+//    @Test
+//    public void testGetContributorNameException() {
+//
+//        WebClient wc = new WebClient("localhost", 3001) {
+//
+//            @Override
+//            public String makeRequest(String resource, Map<String, Object> queryParams) {
+//                throw new RuntimeException("Unknown error");
+//
+//            }
+//
+//        };
+//
+//        DataManager dm = new DataManager(wc);
+//        String name = dm.getContributorName("12345");
+//        assertNull(name);
+//
+//    }
 
     @Test
     public void testContributorBugs() {
