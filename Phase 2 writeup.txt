@@ -5,13 +5,14 @@ I. Additional Tasks for Grading: 2.7, 2.8, 2.9
 II. Code Change Description:
 
 Task 2.1
-
+Added two caches in both attemptLogin and getContributorName in order to not make unnecessary
+requests to the RESTful API.
 
 Task 2.2
 Modified DataManager.java to add defensive programming techniques and pass tests in Robustness
 Test. Modified UserInterface.java to catch potential exceptions from calling methods in Data
-Manager.java and prompt user to try again. Note: Yuhan helped with debugging test cases from
-phase 1, achieving 100% coverage and passing all old and new tests.
+Manager.java and prompt user to try again. Note: Yuhan helped with debugging test cases that
+failed caused by 2.2, achieving 100% coverage and passing all old and new tests.
 
 Task 2.3
 Modified the fund class with a new AggregateFund class to calculate and store aggregated fund.
@@ -23,7 +24,9 @@ Modified UserInterface.java catch potential exceptions from calling methods in D
 and prompt user to try again.
 
 Task 2.8
-
+Added the function of logging out and the options to log back in without restart app.
+Terminated app when login failed.
+Improved code's readability by adding new method, avoiding using duplicate codes.
 
 Task 2.9
 Modified the start() method in the UI to include the view all contribution option.
@@ -34,4 +37,4 @@ Modified the displayfund method for the view all option.
 III. Team Contribution
 Jihan Chen: 2.2, 2.7
 Frank Liu:  2.3, 2.9
-Yuhan Zhang: 2.1, 2.8
+Yuhan Zhang: 2.1, 2.8, fixed 1.1 tests caused by 2.2
