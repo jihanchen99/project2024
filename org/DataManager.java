@@ -13,8 +13,11 @@ public class DataManager {
 
 	private final WebClient client;
 
+	private final Map<String, String> contributorNameCache;
+
 	public DataManager(WebClient client) {
 		this.client = client;
+		this.contributorNameCache = new HashMap<>();
 	}
 
 	/**
@@ -89,10 +92,15 @@ public class DataManager {
 	 */
 	public String getContributorName(String id) {
 
+
 		try {
 
 			Map<String, Object> map = new HashMap<>();
 			map.put("id", id);
+			if (contributorNameCache.containsKey(id)){
+				return contributorNameCache.get(id);
+			}
+
 			String response = client.makeRequest("/findContributorNameById", map);
 
 			JSONParser parser = new JSONParser();
@@ -101,6 +109,7 @@ public class DataManager {
 
 			if (status.equals("success")) {
 				String name = (String)json.get("data");
+				contributorNameCache.put(id, name);
 				return name;
 			}
 			else return null;
