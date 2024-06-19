@@ -42,9 +42,9 @@ public class DataManager {
 
             String response = client.makeRequest("/findOrgByLoginAndPassword", map);
 
-//            if (response == "{\"status\":\"error\",\"error\":\"An unexpected database error occurred\"}") {
-//                throw new IllegalStateException();
-//            }
+            if (response == null) {
+                throw new IllegalStateException();
+            }
 
             JSONParser parser = new JSONParser();
             JSONObject json = (JSONObject) parser.parse(response);
@@ -119,11 +119,9 @@ public class DataManager {
             }
 
             String response = client.makeRequest("/findContributorNameById", map);
-//            if (response == null) {
-//                throw new IllegalStateException();
-//            } else if (response == "{\"status\":\"error\",\"error\":\"An unexpected database error occurred\"}") {
-//                throw new IllegalStateException();
-//            }
+            if (response == null) {
+                throw new IllegalStateException();
+            }
 
             JSONParser parser = new JSONParser();
             JSONObject json = (JSONObject) parser.parse(response);
@@ -162,11 +160,9 @@ public class DataManager {
             map.put("description", description);
             map.put("target", target);
             String response = client.makeRequest("/createFund", map);
-//			if (response == null
-//					|| response.equals("{\"status\":\"error\",\"error\":\"An unexpected database error occurred\"}")
-//					|| response.equals("I AM NOT JSON!")) {
-//				throw new IllegalStateException();
-//			}
+			if (response == null) {
+				throw new IllegalStateException();
+			}
 
             JSONParser parser = new JSONParser();
             JSONObject json = (JSONObject) parser.parse(response);
@@ -196,15 +192,19 @@ public class DataManager {
             Map<String, Object> map = new HashMap<>();
             map.put("id", fundID);
             String response = client.makeRequest("/deleteFund", map);
-//            if (response == null
-//                    || response.equals("{\"status\":\"error\",\"error\":\"An unexpected database error occurred\"}")
-//                    || response.equals("I AM NOT JSON!")) {
-//                throw new IllegalStateException();
-//            }
+            if (response == null) {
+                throw new IllegalStateException();
+            }
             JSONParser parser = new JSONParser();
             JSONObject json = (JSONObject) parser.parse(response);
             String status = (String) json.get("status");
-            return status.equals("success");
+            if (status.equals("success")) {
+                return true;
+            } else if (status.equals("error")) {
+                return false;
+            } else {
+                throw new IllegalStateException("Unexpected status value: " + status);
+            }
         } catch (Exception e) {
             throw new IllegalStateException("Error in communicating with server", e);
         }

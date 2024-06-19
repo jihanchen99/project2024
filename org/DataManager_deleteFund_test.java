@@ -6,7 +6,7 @@ import static org.junit.Assert.*;
 
 public class DataManager_deleteFund_test {
     @Test
-    public void testDeleteFundSuccess() {
+    public void testDeleteFund_Success() {
         DataManager dm = new DataManager(new WebClient("localhost", 3001) {
             @Override
             public String makeRequest(String resource, Map<String, Object> queryParams) {
@@ -18,7 +18,7 @@ public class DataManager_deleteFund_test {
     }
 
     @Test
-    public void testDeleteFundError() {
+    public void testDeleteFund_Error() {
         DataManager dm = new DataManager(new WebClient("localhost", 3001) {
             @Override
             public String makeRequest(String resource, Map<String, Object> queryParams) {
@@ -30,7 +30,7 @@ public class DataManager_deleteFund_test {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testDeleteFundNullId() {
+    public void testDeleteFund_NullId() {
         DataManager dm = new DataManager(new WebClient("localhost", 3001) {
             @Override
             public String makeRequest(String resource, Map<String, Object> queryParams) {
@@ -41,7 +41,7 @@ public class DataManager_deleteFund_test {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void testDeleteFundCommunicationError() {
+    public void testDeleteFund_CommunicationError() {
         DataManager dm = new DataManager(new WebClient("localhost", 3001) {
             @Override
             public String makeRequest(String resource, Map<String, Object> queryParams) {
@@ -52,7 +52,7 @@ public class DataManager_deleteFund_test {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void testDeleteFundUnexpectedResponse() {
+    public void testDeleteFund_UnexpectedResponse() {
         DataManager dm = new DataManager(new WebClient("localhost", 3001) {
             @Override
             public String makeRequest(String resource, Map<String, Object> queryParams) {
@@ -63,26 +63,24 @@ public class DataManager_deleteFund_test {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void testNullResponse() {
+    public void testDeleteFund_NullResponse() {
         DataManager dm = new DataManager(new WebClient("localhost", 3001) {
             @Override
             public String makeRequest(String resource, Map<String, Object> queryParams) {
                 return null;
             }
         });
-        dm.createFund("orgId", "name", "description", 100);
-        fail("DataManager.createFund does not throw IllegalStateException when WebClient returns null");
+        dm.deleteFund("testFundId");
     }
 
     @Test(expected = IllegalStateException.class)
-    public void testResponseError() {
+    public void testDeleteFund_UnexpectedStatus() {
         DataManager dm = new DataManager(new WebClient("localhost", 3001) {
             @Override
             public String makeRequest(String resource, Map<String, Object> queryParams) {
-                return "{\"status\":\"error\",\"error\":\"An unexpected database error occurred\"}";
+                return "{\"status\":\"unknown\"}";
             }
         });
-        dm.createFund("orgId", "name", "description", 100);
-        fail("DataManager.createFund does not throw IllegalStateException when WebClient returns null");
+        dm.deleteFund("testFundId");
     }
 }
