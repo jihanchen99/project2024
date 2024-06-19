@@ -37,41 +37,56 @@ public class DataManager_getContributorName_Test {
     }
 
     @Test
+    public void testFailedCreationNotFound() {
+
+        DataManager dm = new DataManager(new WebClient("localhost", 3001) {
+
+            @Override
+            public String makeRequest(String resource, Map<String, Object> queryParams) {
+                return "{\"status\":\"not found\"}";
+            }
+
+        });
+
+        String name = dm.getContributorName("12345");
+        assertNull(name);
+
+    }
+
+    @Test(expected = IllegalStateException.class)
     public void testFailedCreation() {
 
         DataManager dm = new DataManager(new WebClient("localhost", 3001) {
 
             @Override
             public String makeRequest(String resource, Map<String, Object> queryParams) {
-                return "{\"status\":\"fail\"}";
+                return "{\"status\":\"error\"}";
             }
 
         });
 
         String name = dm.getContributorName("12345");
 
-        assertNull(name);
 
     }
 
-//    @Test
-//    public void testGetContributorNameException() {
-//
-//        WebClient wc = new WebClient("localhost", 3001) {
-//
-//            @Override
-//            public String makeRequest(String resource, Map<String, Object> queryParams) {
-//                throw new RuntimeException("Unknown error");
-//
-//            }
-//
-//        };
-//
-//        DataManager dm = new DataManager(wc);
-//        String name = dm.getContributorName("12345");
-//        assertNull(name);
-//
-//    }
+    @Test(expected = IllegalStateException.class)
+    public void testGetContributorNameException() {
+
+        WebClient wc = new WebClient("localhost", 3001) {
+
+            @Override
+            public String makeRequest(String resource, Map<String, Object> queryParams) {
+                throw new RuntimeException("Unknown error");
+
+            }
+
+        };
+
+        DataManager dm = new DataManager(wc);
+        String name = dm.getContributorName("12345");
+
+    }
 
     @Test
     public void testContributorBugs() {
@@ -94,6 +109,41 @@ public class DataManager_getContributorName_Test {
         assertNotNull(name);
         assertEquals("new fund", name);
 
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetContributorNameNullId() {
+        DataManager dm = new DataManager(new WebClient("localhost", 3001) );
+
+        dm.getContributorName(null);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testGetContributorNameNullResponse() {
+
+        DataManager dm = new DataManager(new WebClient("localhost", 3001) {
+
+            @Override
+            public String makeRequest(String resource, Map<String, Object> queryParams) {
+                return null;
+            }
+        });
+
+        dm.getContributorName("id");
+    }
+
+    @Test
+    public void testGetContributorNameCachePresent() {
+        DataManager dm = new DataManager(new WebClient("localhost", 3001) {
+            @Override
+            public String makeRequest(String resource, Map<String, Object> queryParams) {
+                    return "{\"status\":\"success\",\"data\":\"ContributorName\"}";
+            }
+        });
+
+        dm.getContributorName("id1");
+        dm.getContributorName("id1");
     }
 
 }

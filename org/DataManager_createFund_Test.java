@@ -38,50 +38,80 @@ public class DataManager_createFund_Test {
 	}
 
 	@Test
+	public void testFailedCreationUnknownStatus() {
+
+		DataManager dm = new DataManager(new WebClient("localhost", 3001) {
+
+			@Override
+			public String makeRequest(String resource, Map<String, Object> queryParams) {
+				return "{\"status\":\"unknown status\"}";
+
+			}
+
+		});
+
+		Fund f = dm.createFund("12345", "new fund", "this is the new fund", 10000);
+		assertNull(f);
+	}
+
+	@Test(expected = IllegalStateException.class)
 	public void testFailedCreation() {
 
 		DataManager dm = new DataManager(new WebClient("localhost", 3001) {
 
 			@Override
 			public String makeRequest(String resource, Map<String, Object> queryParams) {
-				return "{\"status\":\"fail\"}";
+				return "{\"status\":\"error\"}";
 
 			}
 
 		});
 
-
 		Fund f = dm.createFund("12345", "new fund", "this is the new fund", 10000);
-
 		assertNull(f);
-
-
 	}
 
 
 
-//	@Test
-//	public void testCreateFundException() {
-//
-//		WebClient wc = new WebClient("localhost", 3001) {
-//
-//			@Override
-//			public String makeRequest(String resource, Map<String, Object> queryParams) {
-//				throw new RuntimeException("Unknown error");
-//
-//			}
-//
-//		};
-//
-//		DataManager dm = new DataManager(wc);
-//
-//
-//		Fund f = dm.createFund("12345", "new fund", "this is the new fund", 10000);
-//
-//		assertNull(f);
-//
-//	}
+	@Test(expected = IllegalStateException.class)
+	public void testCreateFundException() {
+
+		WebClient wc = new WebClient("localhost", 3001) {
+			@Override
+			public String makeRequest(String resource, Map<String, Object> queryParams) {
+				throw new RuntimeException("Unknown error");
+			}
+		};
+
+		DataManager dm = new DataManager(wc);
 
 
+		Fund f = dm.createFund("12345", "new fund", "this is the new fund", 10000);
+	}
+
+
+	@Test(expected = IllegalArgumentException.class)
+	public void tesCreateFundNullOrgId() {
+		WebClient wc = new WebClient("localhost", 3001);
+
+		DataManager dm = new DataManager(wc);
+		dm.createFund(null, "new fund", "this is the new fund", 10000);
+
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void testCreateFundNullResponse() {
+
+		WebClient wc = new WebClient("localhost", 3001) {
+			@Override
+			public String makeRequest(String resource, Map<String, Object> queryParams) {
+				return null;
+			}
+		};
+
+		DataManager dm = new DataManager(wc);
+
+		Fund f = dm.createFund("12345", "new fund", "this is the new fund", 10000);
+	}
 
 }

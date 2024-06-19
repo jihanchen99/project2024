@@ -39,8 +39,8 @@ public class UserInterface {
     public void start() {
 
         while (true) {
-            while (org == null) {
-                loginUI();
+            if (org == null) {
+                break;
             }
 
             System.out.println("\n\n");
@@ -64,6 +64,7 @@ public class UserInterface {
                 continue;
             } else if (input.equals("logout")) {
                 org = null;
+                loginUI();
                 continue;
             }
 
@@ -213,7 +214,15 @@ public class UserInterface {
 
     public void deleteFund(int fundNumber) {
         Fund fundToDelete = org.getFunds().get(fundNumber - 1);
-        boolean success = dataManager.deleteFund(fundToDelete.getId());
+        boolean success = false;
+        try {
+            success = dataManager.deleteFund(fundToDelete.getId());
+        } catch (IllegalArgumentException e){
+            System.out.println("Missing FundId");
+        } catch (IllegalStateException e){
+            System.out.println("Error in communicating with server");
+        }
+
         if (success) {
             org.getFunds().remove(fundToDelete);
             System.out.println("Fund deleted successfully!");
@@ -227,10 +236,7 @@ public class UserInterface {
         String login = in.nextLine();
         System.out.println("enter password");
         String password = in.nextLine();
-        Organization newOrg = attemptLogIn(login, password, dataManager);
-        if (newOrg != null) {
-            org = newOrg;
-        }
+        org = attemptLogIn(login, password, dataManager);
     }
 
     private static Organization attemptLogIn(String login, String password, DataManager ds) {
@@ -238,7 +244,8 @@ public class UserInterface {
         Organization org = null;
         try {
             org = ds.attemptLogin(login, password);
-            // Task 2.2: do sth here?
+        } catch (IllegalArgumentException e) {
+            System.out.println("Missing login or password");
         } catch (IllegalStateException e) {
             System.out.println("Error in communicating with server");
         }
