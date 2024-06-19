@@ -8,13 +8,19 @@ Task 2.1
 
 
 Task 2.2
-
+Modified DataManager.java to add defensive programming techniques and pass tests in Robustness
+Test. Modified UserInterface.java to catch potential exceptions from calling methods in Data
+Manager.java and prompt user to try again. Note: Yuhan helped with debugging test cases from
+phase 1, achieving 100% coverage and passing all old and new tests.
 
 Task 2.3
 Modified the fund class with a new AggregateFund class to calculate and store aggregated fund.
 
 Task 2.7
-
+Added deleteFund() in DataManager.java and UserInterface.java.
+Wrote JUnit test cases for DataManager.deleteFund(), passing all tests.
+Modified UserInterface.java catch potential exceptions from calling methods in Data Manager.java
+and prompt user to try again.
 
 Task 2.8
 
