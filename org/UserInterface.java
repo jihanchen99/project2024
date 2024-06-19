@@ -110,12 +110,20 @@ public class UserInterface {
                         System.out.println("Fund target cannot be negative. Please reenter: ");
                         continue;
                     }
-
-                    Fund fund = dataManager.createFund(org.getId(), name, description, target);
-                    // task 2.2: do something here?
-                    org.getFunds().add(fund);
-                    System.out.println("Fund created successfully!");
-                    return;
+                    // Task 2.2
+                    try{
+                        Fund fund = dataManager.createFund(org.getId(), name, description, target);
+                        org.getFunds().add(fund);
+                        System.out.println("Fund created successfully!");
+                        return;
+                    } catch (Exception e) {
+                        System.out.println("Error creating fund: " + e.getMessage());
+                        System.out.print("Would you like to retry? (yes/no): ");
+                        String retry = in.nextLine().trim().toLowerCase();
+                        if (!retry.equals("yes")) {
+                            return;
+                        }
+                    }
                 } catch (NumberFormatException e) {
                     System.out.println("Fund target must be numeric. Please reenter: ");
                 }
@@ -214,20 +222,28 @@ public class UserInterface {
 
     public void deleteFund(int fundNumber) {
         Fund fundToDelete = org.getFunds().get(fundNumber - 1);
-        boolean success = false;
-        try {
-            success = dataManager.deleteFund(fundToDelete.getId());
-        } catch (IllegalArgumentException e){
-            System.out.println("Missing FundId");
-        } catch (IllegalStateException e){
-            System.out.println("Error in communicating with server");
-        }
+        while (true) {
+            try {
+                boolean success = dataManager.deleteFund(fundToDelete.getId());
+                if (success) {
+                    org.getFunds().remove(fundToDelete);
+                    System.out.println("Fund deleted successfully!");
+                    return;
+                } else {
+                    System.out.println("Failed to delete the fund.");
+                    return;
+                }
+            } catch (IllegalArgumentException e) {
+                System.out.println("Error: Missing or invalid Fund ID.");
+            } catch (IllegalStateException e) {
+                System.out.println("Error in communicating with server.");
+            }
 
-        if (success) {
-            org.getFunds().remove(fundToDelete);
-            System.out.println("Fund deleted successfully!");
-        } else {
-            System.out.println("Failed to delete the fund.");
+            System.out.print("Would you like to retry? (yes/no): ");
+            String retry = in.nextLine().trim().toLowerCase();
+            if (!retry.equals("yes")) {
+                return;
+            }
         }
     }
 
@@ -242,19 +258,32 @@ public class UserInterface {
     private static Organization attemptLogIn(String login, String password, DataManager ds) {
 
         Organization org = null;
-        try {
-            org = ds.attemptLogin(login, password);
-        } catch (IllegalArgumentException e) {
-            System.out.println("Missing login or password");
-        } catch (IllegalStateException e) {
-            System.out.println("Error in communicating with server");
-        }
+        while (true) {
+            try {
+                org = ds.attemptLogin(login, password);
+                if (org != null) {
+                    System.out.println("Login successful!");
+                    return org;
+                } else {
+                    System.out.println("Login failed. Invalid login or password.");
+                }
+            } catch (IllegalArgumentException e) {
+                System.out.println("Missing login or password.");
+            } catch (IllegalStateException e) {
+                System.out.println("Error in communicating with server.");
+            }
 
-        if (org == null) {
-            // failed login
-            System.out.println("Login failed.");
+            System.out.print("Would you like to retry? (yes/no): ");
+            String retry = new Scanner(System.in).nextLine().trim().toLowerCase();
+            if (!retry.equals("yes")) {
+                return null;
+            }
+
+            System.out.print("Enter login: ");
+            login = new Scanner(System.in).nextLine().trim();
+            System.out.print("Enter password: ");
+            password = new Scanner(System.in).nextLine().trim();
         }
-        return org;
     }
 
     public static void main(String[] args) {
