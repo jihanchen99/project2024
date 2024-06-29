@@ -1,6 +1,6 @@
 var express = require('express');
 var app = express();
-
+app.use(express.json());
 
 const {Organization} = require('./DbConfig.js');
 const {Fund} = require('./DbConfig.js');
@@ -483,6 +483,28 @@ app.use('/findOrgLoginById', (req, res) => {
     });
 });
 
+// Task 3.2
+/*
+Handle the form submission to change the organization's password
+*/
+app.use('/changePassword', (req, res) => {
+	const requestData = { ...req.body, ...req.query };
+
+	var filter = { "_id": requestData.orgId, "password": requestData.currentPassword };
+
+	var update = { "password": requestData.newPassword };
+	var action = { "$set": update };
+
+	Organization.findOneAndUpdate(filter, action, { new: true }, (err, result) => {
+		if (err) {
+			res.status(500).json({ "status": "error", "data": err });
+		} else if (!result) {
+			res.status(400).json({ "status": "error", "message": "Current password is incorrect" });
+		} else {
+			res.json({ "status": "success", "message": "Password changed successfully" });
+		}
+	});
+});
 
 /********************************************************/
 
