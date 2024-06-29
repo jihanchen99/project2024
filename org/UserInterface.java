@@ -57,7 +57,7 @@ public class UserInterface {
 
             // task 3.2
             System.out.println("Enter 'c' to change password");
-            
+
 
             String input = in.nextLine();
             if (input.equals("q") || input.equals("quit")) {
@@ -112,11 +112,17 @@ public class UserInterface {
             System.out.println("The two entries do not match. Returning to main menu.");
             return;
         }
-        boolean success = dataManager.changePassword(org.getId(), currentPassword, newPassword1);
-        if (success) {
-            System.out.println("You have successfully changed the password!");
-        } else {
-            System.out.println("Failed to change the password. Please try again!");
+        try {
+            boolean success = dataManager.changePassword(org.getId(), currentPassword, newPassword1);
+            if (success) {
+                System.out.println("You have successfully changed the password!");
+            } else {
+                System.out.println("Failed to change the password. Please try again!");
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println("Missing or invalid orgID, currentPassword, or newPassword.");
+        } catch (IllegalStateException e) {
+            System.out.println("Error in communicating with server.");
         }
     }
 
@@ -173,9 +179,8 @@ public class UserInterface {
             }
         }
     }
-    
-  
-    
+
+
     public void createFund() {
         while (true) {
             System.out.print("Enter the fund name: ");
@@ -202,7 +207,7 @@ public class UserInterface {
                         continue;
                     }
                     // Task 2.2
-                    try{
+                    try {
                         Fund fund = dataManager.createFund(org.getId(), name, description, target);
                         org.getFunds().add(fund);
                         System.out.println("Fund created successfully!");
@@ -285,7 +290,7 @@ public class UserInterface {
 
             // Create a stream and sort in descending order
             Stream<Map.Entry<String, AggregateDonation>> sortedAggregatesStream = aggregates.entrySet().stream()
-                    .sorted(Map.Entry.<String, AggregateDonation>comparingByValue((a, b) -> Long.compare(b.getTotal(), a.getTotal())));
+                    .sorted(Map.Entry.comparingByValue((a, b) -> Long.compare(b.getTotal(), a.getTotal())));
 
             List<Map.Entry<String, AggregateDonation>> sortedAggregates = sortedAggregatesStream.collect(Collectors.toList());
 
