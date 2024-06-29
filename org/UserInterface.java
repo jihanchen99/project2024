@@ -54,6 +54,9 @@ public class UserInterface {
             System.out.println("Enter 'q' or 'quit' to exit");
             System.out.println("Enter 'logout' to log out");
             System.out.println("Enter 'e' to edit organization information");
+
+            // task 3.2
+            System.out.println("Enter 'c' to change password");
             
 
             String input = in.nextLine();
