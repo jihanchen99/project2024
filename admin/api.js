@@ -1,6 +1,7 @@
 var express = require('express');
 var app = express();
 
+
 const {Organization} = require('./DbConfig.js');
 const {Fund} = require('./DbConfig.js');
 const {Contributor} = require('./DbConfig.js');
@@ -303,6 +304,86 @@ app.use('/findFundNameById', (req, res) => {
     });
 
 
+//3.3
+
+app.post('/updateOrgInfo', (req, res) => {
+    const { orgId, name, description } = req.body;
+    console.log("Received orgId:", orgId);
+	const orgId2 = "6664be4735256e45e4d4df29"; // Replace with a valid orgId from your database
+	
+    console.log("Received update request:", req.body); // Debugging line
+    console.log("Parsed values:", { orgId2, name, description }); // Additional debugging line
+
+    var filter = { "_id": orgId };
+    var update = { "name": name, "description": description };
+    var action = { "$set": update };
+
+    Organization.findOneAndUpdate(filter, action, { new: true }, (err, result) => {
+        if (err) {
+            console.error("Error finding/updating organization:", err); // Debugging line
+            return res.status(500).json({ "status": "error", "data": err });
+        }
+        if (!result) {
+            console.error("Organization not found for ID:", orgId); // Debugging line
+            return res.status(404).json({ "status": "not found", "message": "Organization not found" });
+        }
+        console.log("Organization updated successfully:", result); // Debugging line
+        res.json({ "status": "success", "data": result });
+    });
+});
+
+/*
+app.post('/updateOrgInfo', (req, res) => {
+    // Hard-code the orgId for debugging purposes
+    const orgId = "6664be4735256e45e4d4df29"; // Replace with a valid orgId from your database
+    const {name, description } = req.body;
+    
+    console.log("Received update request:", { orgId, name, description }); // Debugging line
+
+    var filter = { "_id": orgId };
+    var update = { "name": name, "description": description };
+    var action = { "$set": update };
+
+    Organization.findOneAndUpdate(filter, action, { new: true }, (err, result) => {
+        if (err) {
+            console.error("Error finding/updating organization:", err); // Debugging line
+            return res.status(500).json({ "status": "error", "data": err });
+        }
+        if (!result) {
+            console.error("Organization not found for ID:", orgId); // Debugging line
+            return res.status(404).json({ "status": "not found", "message": "Organization not found" });
+        }
+        console.log("Organization updated successfully:", result); // Debugging line
+        res.json({ "status": "success", "data": result });
+    });
+});
+*/
+
+/*
+
+app.post('/updateOrgInfo', (req, res) => {
+    const { orgId, name, description } = req.body;
+
+    // Define the update action
+    var update = { name, description };
+
+    // Attempt to find the organization and update it
+    Organization.findByIdAndUpdate(orgId, update, { new: true }, (err, org) => {
+        if (err) {
+            // If there is an error during the update, return an error response
+            res.status(500).json({ message: "Error updating organization", error: err });
+        } else if (!org) {
+            // If no organization was found, return a not found response
+            res.status(404).json({ message: "Organization not found" });
+        } else {
+            // If the update is successful, return a success response with the updated organization
+            res.json({ message: "Organization updated successfully", org });
+        }
+    });
+});
+
+
+*/
 
 /*
 Return information about all organizations, so that user can choose one to contribute to.
@@ -358,6 +439,49 @@ app.use('/allOrgs', (req, res) => {
 	    }).sort({ 'name': 'asc' });
     });
 
+
+
+app.get('/updateOrgInfo', (req, res) => {
+    const { orgId, name, description } = req.query; 
+
+    console.log("Received orgId:", orgId);
+    console.log("Received update request:", { orgId, name, description });
+
+    var filter = { "_id": orgId };
+    var update = { "name": name, "description": description };
+    var action = { "$set": update };
+
+    console.log("Filter object:", filter);
+    console.log("Update object:", update);
+
+    Organization.findOneAndUpdate(filter, action, { new: true }, (err, result) => {
+        if (err) {
+            console.error("Error finding/updating organization:", err); 
+            return res.status(500).json({ "status": "error", "data": err });
+        }
+        if (!result) {
+            console.error("Organization not found for ID:", orgId); 
+            return res.status(404).json({ "status": "not found", "message": "Organization not found" });
+        }
+        console.log("Organization updated successfully:", result);
+        res.json({ "status": "success", "data": result });
+    });
+});
+
+//3.3
+app.use('/findOrgLoginById', (req, res) => {
+    var query = { "_id": req.query.orgId };
+
+    Organization.findOne(query, (err, result) => {
+        if (err) {
+            res.json({ "status": "error", "data": err });
+        } else if (!result) {
+            res.json({ "status": "not found" });
+        } else {
+            res.json({ "status": "success", "data": result.login });
+        }
+    });
+});
 
 
 /********************************************************/
