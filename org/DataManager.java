@@ -211,7 +211,34 @@ public class DataManager {
             throw new IllegalStateException("Error in communicating with server", e);
         }
     }
-    
+
+    // Task 3.2
+    public boolean changePassword(String orgId, String currentPassword, String newPassword) {
+        if (orgId == null || currentPassword == null || newPassword == null) {
+            throw new IllegalArgumentException();
+        }
+
+        try {
+            Map<String, Object> map = new HashMap<>();
+            map.put("orgId", orgId);
+            map.put("currentPassword", currentPassword);
+            map.put("newPassword", newPassword);
+
+            String response = client.makeRequest("/changePassword", map);
+            if (response == null) {
+                throw new IllegalStateException("No response from server");
+            }
+
+            JSONParser parser = new JSONParser();
+            JSONObject json = (JSONObject) parser.parse(response);
+            String status = (String) json.get("status");
+
+            return status.equals("success");
+
+        } catch (Exception e) {
+            throw new IllegalStateException("Error in communicating with server", e);
+        }
+    }
     
     //3.3
     public boolean updateOrganizationInfo(String orgId, String name, String description) {
