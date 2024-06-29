@@ -7,23 +7,22 @@ II. Code Change Description:
 Task 3.1
 
 
-
 Task 3.2
-
+implemented /changePassword in api.js
+implemented changePassword() in DataManager.java
+implemented changePassword() in UserInterface.java
+modified start() in UserInterface to incorporate the change password option
 
 Task 3.3
 add /updateOrgInfo in api.js
-add updateOrganizationInfo in Datamanager
-add editOrganizationInfo in Userinterface
+add updateOrganizationInfo in DataManager
+add editOrganizationInfo in UserInterface
 modify start()
-
 
 Task 3.4
 
 
-
-
 III. Team Contribution
-Jihan Chen: 
-Frank Liu:  3.3
-Yuhan Zhang: 
+Jihan Chen: 3.2, 3.4
+Frank Liu: 3.3, 3.4
+Yuhan Zhang: 3.1
