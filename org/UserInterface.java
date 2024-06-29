@@ -73,6 +73,9 @@ public class UserInterface {
             } else if (input.equalsIgnoreCase("e")) {
                 editOrganizationInfo();
                 continue;
+            } else if (input.equalsIgnoreCase("c")) {
+                changePassword();
+                continue;
             }
 
             // display after log in
@@ -91,7 +94,32 @@ public class UserInterface {
         }
 
     }
-    
+
+    // Task 3.2
+    private void changePassword() {
+        System.out.println("Enter current password: ");
+        String currentPassword = in.nextLine();
+        String login = dataManager.getOrgLoginById(org.getId());
+        if (dataManager.attemptLogin(login, currentPassword) == null) {
+            System.out.println("Incorrect password. Returning to main menu.");
+            return;
+        }
+        System.out.println("Enter new password: ");
+        String newPassword1 = in.nextLine();
+        System.out.println("Re-enter new password: ");
+        String newPassword2 = in.nextLine();
+        if (!newPassword1.equals(newPassword2)) {
+            System.out.println("The two entries do not match. Returning to main menu.");
+            return;
+        }
+        boolean success = dataManager.changePassword(org.getId(), currentPassword, newPassword1);
+        if (success) {
+            System.out.println("You have successfully changed the password!");
+        } else {
+            System.out.println("Failed to change the password. Please try again!");
+        }
+    }
+
     //3.3
     private void editOrganizationInfo() {
         System.out.print("Enter current password: ");
