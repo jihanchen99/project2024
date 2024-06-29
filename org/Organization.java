@@ -36,5 +36,12 @@ public class Organization {
 		funds.add(fund);
 	}
 	
-
+	//3.3
+    public void setName(String name) {
+        this.name = name;
+    }
+    //3.3
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

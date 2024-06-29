@@ -53,7 +53,8 @@ public class UserInterface {
             System.out.println("Enter 'a' to view all contributions across all funds.");
             System.out.println("Enter 'q' or 'quit' to exit");
             System.out.println("Enter 'logout' to log out");
-
+            System.out.println("Enter 'e' to edit organization information");
+            
 
             String input = in.nextLine();
             if (input.equals("q") || input.equals("quit")) {
@@ -65,6 +66,9 @@ public class UserInterface {
             } else if (input.equals("logout")) {
                 org = null;
                 loginUI();
+                continue;
+            } else if (input.equalsIgnoreCase("e")) {
+                editOrganizationInfo();
                 continue;
             }
 
@@ -84,7 +88,63 @@ public class UserInterface {
         }
 
     }
+    
+    //3.3
+    private void editOrganizationInfo() {
+        System.out.print("Enter current password: ");
+        String password = in.nextLine();
 
+        String login = dataManager.getOrgLoginById(org.getId());
+
+        if (dataManager.attemptLogin(login, password) == null) {
+            System.out.println("Incorrect password. Returning to main menu.");
+            return;
+        }
+
+        System.out.println("Current organization name: " + org.getName());
+        System.out.println("Current organization description: " + org.getDescription());
+
+
+        System.out.print("Enter new organization name (leave blank to keep current): ");
+        String newName = in.nextLine().trim();
+        if (newName.isEmpty()) {
+            newName = org.getName();
+        }
+
+        System.out.print("Enter new organization description (leave blank to keep current): ");
+        String newDescription = in.nextLine().trim();
+        if (newDescription.isEmpty()) {
+            newDescription = org.getDescription();
+        }
+
+        while (true) {
+            try {
+                boolean success = dataManager.updateOrganizationInfo(org.getId(), newName, newDescription);
+                if (success) {
+                    org.setName(newName);
+                    org.setDescription(newDescription);
+                    System.out.println("Organization information updated successfully!");
+                    return;
+                } else {
+                    System.out.println("Failed to update organization information.");
+                    return;
+                }
+            } catch (IllegalArgumentException e) {
+                System.out.println("Error: Missing or invalid organization ID.");
+            } catch (IllegalStateException e) {
+                System.out.println("Error in communicating with server.");
+            }
+
+            System.out.print("Would you like to retry? (yes/no): ");
+            String retry = in.nextLine().trim().toLowerCase();
+            if (!retry.equals("yes")) {
+                return;
+            }
+        }
+    }
+    
+  
+    
     public void createFund() {
         while (true) {
             System.out.print("Enter the fund name: ");

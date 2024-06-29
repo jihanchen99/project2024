@@ -1,6 +1,8 @@
 import org.json.simple.JSONArray;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.util.*;
 
@@ -209,4 +211,67 @@ public class DataManager {
             throw new IllegalStateException("Error in communicating with server", e);
         }
     }
+    
+    
+    //3.3
+    public boolean updateOrganizationInfo(String orgId, String name, String description) {
+
+        if (orgId == null || name == null || description == null) {
+            throw new IllegalArgumentException();
+        }
+
+        try {
+            Map<String, Object> map = new HashMap<>();
+            map.put("orgId", orgId);
+            map.put("name", name);
+            map.put("description", description);
+
+//            // Print the map for debugging
+//            System.out.println("Request payload: " + map);
+
+            String response = client.makeRequest("/updateOrgInfo", map); 
+            if (response == null) {
+                throw new IllegalStateException();
+            }
+
+            JSONParser parser = new JSONParser();
+            JSONObject json = (JSONObject) parser.parse(response);
+            String status = (String) json.get("status");
+
+            return status.equals("success");
+
+        } catch (Exception e) {
+            throw new IllegalStateException("Error in communicating with server", e);
+        }
+    }
+    
+    //3.3
+    public String getOrgLoginById(String orgId) {
+        if (orgId == null) {
+            throw new IllegalArgumentException();
+        }
+
+        try {
+            Map<String, Object> map = new HashMap<>();
+            map.put("orgId", orgId);
+
+            String response = client.makeRequest("/findOrgLoginById", map);
+            if (response == null) {
+                throw new IllegalStateException();
+            }
+
+            JSONParser parser = new JSONParser();
+            JSONObject json = (JSONObject) parser.parse(response);
+            String status = (String) json.get("status");
+
+            if (status.equals("success")) {
+                return (String) json.get("data");
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            throw new IllegalStateException("Error in communicating with server", e);
+        }
+    }
+ 
 }
