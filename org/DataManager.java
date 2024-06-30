@@ -300,5 +300,89 @@ public class DataManager {
             throw new IllegalStateException("Error in communicating with server", e);
         }
     }
+    
+    
+    //3.4
+    public boolean contributorExists(String contributorId) {
+        try {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", contributorId);
+
+            String response = client.makeRequest("/findContributorNameById", map);
+            if (response == null) {
+                throw new IllegalStateException("Null response from server");
+            }
+
+            JSONParser parser = new JSONParser();
+            JSONObject json = (JSONObject) parser.parse(response);
+            String status = (String) json.get("status");
+
+            return status.equals("success");
+
+        } catch (Exception e) {
+            System.out.println("Error in contributorExists: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    //3.4
+    public boolean makeDonation(String fundId, String contributorId, String contributorName, long amount) {
+        if (fundId == null || contributorId == null || amount < 0) {
+            throw new IllegalArgumentException("Invalid input parameters");
+        }
+
+        try {
+            Map<String, Object> map = new HashMap<>();
+            map.put("fund", fundId);
+            map.put("contributor", contributorId);
+            map.put("amount", amount);
+
+            System.out.println("Making donation request with parameters: " + map);
+
+            String response = client.makeRequest("/makeDonation", map);
+            if (response == null) {
+                throw new IllegalStateException("Null response from server");
+            }
+
+            System.out.println("Response from server: " + response);
+
+            JSONParser parser = new JSONParser();
+            JSONObject json = (JSONObject) parser.parse(response);
+            String status = (String) json.get("status");
+
+            if (status.equals("success")) {
+                JSONObject donationData = (JSONObject) json.get("data");
+                String date = (String) donationData.get("date");
+
+                Donation newDonation = new Donation(fundId, contributorName, amount, date);
+                Fund fund = findFundById(fundId);
+                if (fund != null) {
+                    fund.addDonation(newDonation);
+                }
+
+                return true;
+            }
+
+            return false;
+
+        } catch (Exception e) {
+            System.out.println("Error in makeDonation: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private Fund findFundById(String fundId) {
+        for (Organization organization : organizationCache.values()) {
+            for (Fund fund : organization.getFunds()) {
+                if (fund.getId().equals(fundId)) {
+                    return fund;
+                }
+            }
+        }
+        return null;
+    
+    }
  
 }

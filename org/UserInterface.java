@@ -53,11 +53,13 @@ public class UserInterface {
             System.out.println("Enter 'a' to view all contributions across all funds.");
             System.out.println("Enter 'q' or 'quit' to exit");
             System.out.println("Enter 'logout' to log out");
+            //3.3
             System.out.println("Enter 'e' to edit organization information");
 
             // task 3.2
             System.out.println("Enter 'c' to change password");
-
+            //3.4
+            System.out.println("Enter 'd' to make a donation");
 
             String input = in.nextLine();
             if (input.equals("q") || input.equals("quit")) {
@@ -75,6 +77,9 @@ public class UserInterface {
                 continue;
             } else if (input.equalsIgnoreCase("c")) {
                 changePassword();
+                continue;
+            }else if (input.equalsIgnoreCase("d")) {
+                makeDonation();
                 continue;
             }
 
@@ -95,6 +100,74 @@ public class UserInterface {
 
     }
 
+    
+    
+    // 3.4
+    private void makeDonation() {
+        System.out.println("Enter the fund number to donate to:");
+        String fundNumberInput = in.nextLine();
+        int fundNumber;
+
+        try {
+            fundNumber = Integer.parseInt(fundNumberInput);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid fund number.");
+            return;
+        }
+
+        if (fundNumber <= 0 || fundNumber > org.getFunds().size()) {
+            System.out.println("Fund number out of range.");
+            return;
+        }
+
+        Fund fund = org.getFunds().get(fundNumber - 1);
+
+        System.out.println("Enter the contributor ID:");
+        String contributorId = in.nextLine().trim();
+
+        if (contributorId.isEmpty()) {
+            System.out.println("Contributor ID cannot be empty.");
+            return;
+        }
+
+        if (!dataManager.contributorExists(contributorId)) {
+            System.out.println("Contributor ID does not exist.");
+            return;
+        }
+
+        System.out.println("Enter the donation amount:");
+        String amountInput = in.nextLine();
+        long amount;
+
+        try {
+            amount = Long.parseLong(amountInput);
+            if (amount < 0) {
+                System.out.println("Donation amount cannot be negative.");
+                return;
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Donation amount must be a numeric value.");
+            return;
+        }
+
+        boolean success = false;
+        try {
+        	String contributorName = dataManager.getContributorName(contributorId);
+
+            success = dataManager.makeDonation(fund.getId(), contributorId,contributorName, amount);
+        } catch (Exception e) {
+            System.out.println("Error making donation: " + e.getMessage());
+        }
+
+        if (success) {
+            System.out.println("Donation successful!");
+            displayFund(fundNumber);
+        } else {
+            System.out.println("Failed to make donation.");
+        }
+    }
+    
+    
     // Task 3.2
     private void changePassword() {
         System.out.println("Enter current password: ");
