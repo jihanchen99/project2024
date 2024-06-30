@@ -1,9 +1,8 @@
+import org.json.simple.parser.ParseException;
+
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -100,8 +99,8 @@ public class UserInterface {
 
     }
 
-    
-    
+
+
     // 3.4
     private void makeDonation() {
         System.out.println("Enter the fund number to donate to:");
@@ -166,8 +165,8 @@ public class UserInterface {
             System.out.println("Failed to make donation.");
         }
     }
-    
-    
+
+
     // Task 3.2
     private void changePassword() {
         System.out.println("Enter current password: ");
@@ -453,17 +452,120 @@ public class UserInterface {
             System.out.print("Enter password: ");
             password = new Scanner(System.in).nextLine().trim();
         }
+
+
+    }
+
+    private static Organization createOrg() {
+        final Scanner in = new Scanner(System.in);
+        DataManager ds = new DataManager(new WebClient("localhost", 3001));
+        while (true) {
+            String login;
+            do {
+                System.out.print("Enter login name: ");
+                login = in.nextLine().trim();
+                if (login.isEmpty()) {
+                    System.out.println("Login name cannot be empty. Please re-enter.");
+                }
+            } while (login.isEmpty());
+
+            String password;
+            do {
+                System.out.print("Enter password: ");
+                password = in.nextLine().trim();
+                if (password.isEmpty()) {
+                    System.out.println("Password cannot be empty. Please re-enter.");
+                }
+            } while (password.isEmpty());
+
+            String orgName;
+            do {
+                System.out.print("Enter organization name: ");
+                orgName = in.nextLine().trim();
+                if (orgName.isEmpty()) {
+                    System.out.println("Organization name cannot be empty. Please re-enter.");
+                }
+            } while (orgName.isEmpty());
+
+            String description;
+            do {
+                System.out.print("Enter organization description: ");
+                description = in.nextLine().trim();
+                if (description.isEmpty()) {
+                    System.out.println("Organization description cannot be empty. Please re-enter.");
+                }
+            } while (description.isEmpty());
+
+            try {
+                Organization newOrg = ds.createOrganization(login, password, orgName, description);
+                if (newOrg == null) {
+                    throw new IllegalStateException("null response from server");
+                }
+
+                System.out.println("Organization created successfully!");
+                System.out.println("Name: " + newOrg.getName());
+                System.out.println("Description: " + newOrg.getDescription());
+                return newOrg;
+            } catch (IllegalStateException e) {
+                if (Objects.equals(e.getMessage(), "login already exists")) {
+                    System.out.print("\n");
+                    System.out.print("Would you like to retry? (yes/no): ");
+                    String retry = in.nextLine().trim().toLowerCase();
+                    if (!retry.equals("yes")) {
+                        return null;
+                    }
+                }
+
+            } catch (IllegalArgumentException e) {
+                System.out.println("Missing crucial arguments!");
+                return null;
+            } catch (Exception e) {
+                throw new IllegalStateException("Error in communicating with server", e);
+            }
+
+        }
+    }
+
+
+    public void createOrgUI() {
+        while (true) {
+            System.out.println("Create Organization or log in?(enter 'create' or 'login')");
+            final Scanner in = new Scanner(System.in);
+            String answer = in.nextLine().trim();
+            if (answer.isEmpty()) {
+                System.out.println("Fund name cannot be empty. Please reenter.");
+                continue;
+            } else if (answer.equalsIgnoreCase("create")) {
+                org = createOrg();
+                break;
+            } else if (answer.equalsIgnoreCase("login")) {
+                loginUI();
+                break;
+            } else {
+                System.out.println("Invalid option. Try again.\n");
+//                System.out.println("Create Organization or log in?(enter 'create' or 'login'");
+//                answer = in.nextLine().trim();
+            }
+        }
     }
 
     public static void main(String[] args) {
         DataManager ds = new DataManager(new WebClient("localhost", 3001));
 
-        String login = args[0];
-        String password = args[1];
-        Organization org = attemptLogIn(login, password, ds);
+        UserInterface ui = new UserInterface(ds, null);
 
-        UserInterface ui = new UserInterface(ds, org);
+        if (args == null || args.length == 0) {
+            ui.createOrgUI();
+
+        } else {
+            String login = args[0];
+            String password = args[1];
+            Organization org = attemptLogIn(login, password, ds);
+            ui.org = org;
+        }
+
         ui.start();
     }
-
 }
+
+

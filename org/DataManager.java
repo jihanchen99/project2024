@@ -133,7 +133,7 @@ public class DataManager {
                 String name = (String) json.get("data");
                 contributorNameCache.put(id, name);
                 return name;
-            } else if(status.equals("error")){
+            } else if (status.equals("error")) {
                 throw new IllegalStateException();
             } else {
                 return null;
@@ -142,6 +142,44 @@ public class DataManager {
         } catch (Exception e) {
             throw new IllegalStateException("Error in communicating with server", e);
         }
+    }
+
+    public Organization createOrganization(String login, String password, String name, String description) throws ParseException {
+        if (login == null || password == null || name == null || description == null) {
+            throw new IllegalArgumentException();
+        }
+
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("login", login);
+        map.put("password", password);
+        map.put("name", name);
+        map.put("description", description);
+        String response = client.makeRequest("/createOrg", map);
+        if (response == null) {
+            throw new IllegalStateException();
+        }
+//            System.out.println(response);
+        JSONParser parser = new JSONParser();
+        JSONObject json = (JSONObject) parser.parse(response);
+        String status = (String) json.get("status");
+
+        if (status.equals("success")) {
+            JSONObject orgData = (JSONObject) json.get("data");
+            //String name = (String) orgData.get("name");
+            String id = (String) orgData.get("_id");
+            return new Organization(id, name, description);
+        } else { // status.equals("success")
+            JSONObject err = (JSONObject) json.get("data");
+            String errorCode = String.valueOf(err.get("code"));
+            if (Objects.equals(errorCode, "11000")) {
+                System.out.println("login already exists");
+                throw new IllegalStateException("login already exists");
+            } else {
+                throw new IllegalStateException("unknown error code: " + errorCode);
+            }
+        }
+
     }
 
     /**
@@ -162,9 +200,9 @@ public class DataManager {
             map.put("description", description);
             map.put("target", target);
             String response = client.makeRequest("/createFund", map);
-			if (response == null) {
-				throw new IllegalStateException();
-			}
+            if (response == null) {
+                throw new IllegalStateException();
+            }
 
             JSONParser parser = new JSONParser();
             JSONObject json = (JSONObject) parser.parse(response);
