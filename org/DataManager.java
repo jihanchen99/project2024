@@ -144,11 +144,14 @@ public class DataManager {
         }
     }
 
+    // Task 3.1 Organization App new user registration
     public Organization createOrganization(String login, String password, String name, String description) throws ParseException {
-        if (login == null || password == null || name == null || description == null) {
-            throw new IllegalArgumentException();
+        if (login == null || login.isEmpty()
+                || password == null || password.isEmpty()
+                || name == null || name.isEmpty()
+                || description == null || description.isEmpty()) {
+            throw new IllegalArgumentException("Arguments cannot be empty");
         }
-
 
         Map<String, Object> map = new HashMap<>();
         map.put("login", login);
@@ -157,29 +160,25 @@ public class DataManager {
         map.put("description", description);
         String response = client.makeRequest("/createOrg", map);
         if (response == null) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("Error in communicating with server");
         }
-//            System.out.println(response);
         JSONParser parser = new JSONParser();
         JSONObject json = (JSONObject) parser.parse(response);
         String status = (String) json.get("status");
 
-        if (status.equals("success")) {
+        if ("success".equals(status)) {
             JSONObject orgData = (JSONObject) json.get("data");
-            //String name = (String) orgData.get("name");
             String id = (String) orgData.get("_id");
             return new Organization(id, name, description);
-        } else { // status.equals("success")
+        } else { // status.equals("error")
             JSONObject err = (JSONObject) json.get("data");
             String errorCode = String.valueOf(err.get("code"));
-            if (Objects.equals(errorCode, "11000")) {
-                System.out.println("login already exists");
+            if ("11000".equals(errorCode)) {
                 throw new IllegalStateException("login already exists");
             } else {
-                throw new IllegalStateException("unknown error code: " + errorCode);
+                throw new IllegalStateException("Error in communicating with server error code: " + errorCode);
             }
         }
-
     }
 
     /**

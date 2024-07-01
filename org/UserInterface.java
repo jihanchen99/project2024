@@ -1,5 +1,3 @@
-import org.json.simple.parser.ParseException;
-
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -16,6 +14,9 @@ public class UserInterface {
     public UserInterface(DataManager dataManager, Organization org) {
         this.dataManager = dataManager;
         this.org = org;
+    }
+    public UserInterface(DataManager dataManager) {
+        this.dataManager = dataManager;
     }
 
     private void displayOrganization() {
@@ -453,10 +454,9 @@ public class UserInterface {
             password = new Scanner(System.in).nextLine().trim();
         }
 
-
     }
 
-    private static Organization createOrg() {
+    private static Organization createOrgUI() {
         final Scanner in = new Scanner(System.in);
         DataManager ds = new DataManager(new WebClient("localhost", 3001));
         while (true) {
@@ -498,53 +498,40 @@ public class UserInterface {
 
             try {
                 Organization newOrg = ds.createOrganization(login, password, orgName, description);
-                if (newOrg == null) {
-                    throw new IllegalStateException("null response from server");
-                }
 
                 System.out.println("Organization created successfully!");
                 System.out.println("Name: " + newOrg.getName());
                 System.out.println("Description: " + newOrg.getDescription());
                 return newOrg;
-            } catch (IllegalStateException e) {
-                if (Objects.equals(e.getMessage(), "login already exists")) {
-                    System.out.print("\n");
-                    System.out.print("Would you like to retry? (yes/no): ");
-                    String retry = in.nextLine().trim().toLowerCase();
-                    if (!retry.equals("yes")) {
-                        return null;
-                    }
-                }
-
-            } catch (IllegalArgumentException e) {
-                System.out.println("Missing crucial arguments!");
-                return null;
+            } catch (IllegalStateException | IllegalArgumentException e) {
+                System.out.println("Failed to create Organization: "  + e.getMessage());
             } catch (Exception e) {
-                throw new IllegalStateException("Error in communicating with server", e);
+                System.out.println("Error in communicating with server");
+            }
+
+            System.out.println("Would you like to retry? (Y/N): ");
+            String retry = in.nextLine().trim().toLowerCase();
+            if (!"Y".equalsIgnoreCase(retry)) {
+                return null;
             }
 
         }
     }
 
 
-    public void createOrgUI() {
+    public void createOrLoginUI() {
         while (true) {
-            System.out.println("Create Organization or log in?(enter 'create' or 'login')");
+            System.out.println("Create an  organization or Log in?(enter 'C' or 'L')");
             final Scanner in = new Scanner(System.in);
             String answer = in.nextLine().trim();
-            if (answer.isEmpty()) {
-                System.out.println("Fund name cannot be empty. Please reenter.");
-                continue;
-            } else if (answer.equalsIgnoreCase("create")) {
-                org = createOrg();
+            if ("C".equalsIgnoreCase(answer)) {
+                org = createOrgUI();
                 break;
-            } else if (answer.equalsIgnoreCase("login")) {
+            } else if ("L".equalsIgnoreCase(answer)) {
                 loginUI();
                 break;
             } else {
                 System.out.println("Invalid option. Try again.\n");
-//                System.out.println("Create Organization or log in?(enter 'create' or 'login'");
-//                answer = in.nextLine().trim();
             }
         }
     }
@@ -552,10 +539,10 @@ public class UserInterface {
     public static void main(String[] args) {
         DataManager ds = new DataManager(new WebClient("localhost", 3001));
 
-        UserInterface ui = new UserInterface(ds, null);
+        UserInterface ui = new UserInterface(ds);
 
         if (args == null || args.length == 0) {
-            ui.createOrgUI();
+            ui.createOrLoginUI();
 
         } else {
             String login = args[0];
@@ -564,6 +551,7 @@ public class UserInterface {
             ui.org = org;
         }
 
+        // after log in
         ui.start();
     }
 }
