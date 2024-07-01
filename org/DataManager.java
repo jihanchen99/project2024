@@ -56,20 +56,20 @@ public class DataManager {
             if (status.equals("success")) {
                 JSONObject data = (JSONObject) json.get("data");
                 String fundId = (String) data.get("_id");
-                String name = (String) data.get("name");
+                String orgName = (String) data.get("name");
                 String description = (String) data.get("description");
-                Organization org = new Organization(fundId, name, description);
+                Organization org = new Organization(fundId, orgName, description);
 
                 JSONArray funds = (JSONArray) data.get("funds");
                 Iterator it = funds.iterator();
                 while (it.hasNext()) {
                     JSONObject fund = (JSONObject) it.next();
                     fundId = (String) fund.get("_id");
-                    name = (String) fund.get("name");
+                    String fundName = (String) fund.get("name");
                     description = (String) fund.get("description");
                     long target = (Long) fund.get("target");
 
-                    Fund newFund = new Fund(fundId, name, description, target);
+                    Fund newFund = new Fund(fundId, fundName, description, target);
 
                     JSONArray donations = (JSONArray) fund.get("donations");
                     List<Donation> donationList = new LinkedList<>();
@@ -80,7 +80,7 @@ public class DataManager {
                         String contributorName = this.getContributorName(contributorId);
                         long amount = (Long) donation.get("amount");
                         String date = (String) donation.get("date");
-                        donationList.add(new Donation(fundId, contributorName, amount, date));
+                        donationList.add(new Donation(fundId, fundName, contributorName, amount, date));
                     }
 
                     newFund.setDonations(donationList);
@@ -252,7 +252,7 @@ public class DataManager {
     }
 
     // Task 3.2
-    public boolean changePassword(String orgId, String currentPassword, String newPassword) {
+    public boolean changePassword(String orgId, String login, String currentPassword, String newPassword) {
         if (orgId == null || currentPassword == null || newPassword == null) {
             throw new IllegalArgumentException();
         }
@@ -276,7 +276,7 @@ public class DataManager {
 
             if (isSuccess) {
                 // Invalidate cache with old password
-                organizationCache.remove(List.of(orgId, currentPassword));
+                organizationCache.remove(List.of(login, currentPassword));
             }
             return isSuccess;
 
@@ -371,7 +371,7 @@ public class DataManager {
     }
 
     //3.4
-    public boolean makeDonation(String fundId, String contributorId, String contributorName, long amount) {
+    public Donation makeDonation(String fundId, String fundName, String contributorId, String contributorName, long amount) {
         if (fundId == null || contributorId == null || amount < 0) {
             throw new IllegalArgumentException("Invalid input parameters");
         }
@@ -399,33 +399,32 @@ public class DataManager {
                 JSONObject donationData = (JSONObject) json.get("data");
                 String date = (String) donationData.get("date");
 
-                Donation newDonation = new Donation(fundId, contributorName, amount, date);
-                Fund fund = findFundById(fundId);
-                if (fund != null) {
-                    fund.addDonation(newDonation);
-                }
+                Donation newDonation = new Donation(fundId, fundName, contributorName, amount, date);
+//                Fund fund = findFundById(fundId);
+//                if (fund != null) {
+//                    fund.addDonation(newDonation);
+//                }
 
-                return true;
+                return newDonation;
             }
 
-            return false;
+            return null;
 
         } catch (Exception e) {
-            System.out.println("Error in makeDonation: " + e.getMessage());
-            return false;
+            throw new IllegalStateException("Error in communicating with server", e);
         }
     }
 
-    private Fund findFundById(String fundId) {
-        for (Organization organization : organizationCache.values()) {
-            for (Fund fund : organization.getFunds()) {
-                if (fund.getId().equals(fundId)) {
-                    return fund;
-                }
-            }
-        }
-        return null;
-
-    }
+//    private Fund findFundById(String fundId) {
+//        for (Organization organization : organizationCache.values()) {
+//            for (Fund fund : organization.getFunds()) {
+//                if (fund.getId().equals(fundId)) {
+//                    return fund;
+//                }
+//            }
+//        }
+//        return null;
+//
+//    }
 
 }

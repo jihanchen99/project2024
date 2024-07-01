@@ -15,6 +15,7 @@ public class UserInterface {
         this.dataManager = dataManager;
         this.org = org;
     }
+
     public UserInterface(DataManager dataManager) {
         this.dataManager = dataManager;
     }
@@ -43,7 +44,7 @@ public class UserInterface {
                 break;
             }
 
-            System.out.println("\n\n");
+            System.out.println("\n");
 
             displayOrganization();
 
@@ -78,7 +79,7 @@ public class UserInterface {
             } else if (input.equalsIgnoreCase("c")) {
                 changePassword();
                 continue;
-            }else if (input.equalsIgnoreCase("d")) {
+            } else if (input.equalsIgnoreCase("d")) {
                 makeDonation();
                 continue;
             }
@@ -99,7 +100,6 @@ public class UserInterface {
         }
 
     }
-
 
 
     // 3.4
@@ -150,20 +150,24 @@ public class UserInterface {
             return;
         }
 
-        boolean success = false;
+        Donation donation = null;
         try {
-        	String contributorName = dataManager.getContributorName(contributorId);
+            String contributorName = dataManager.getContributorName(contributorId);
 
-            success = dataManager.makeDonation(fund.getId(), contributorId,contributorName, amount);
+            donation = dataManager.makeDonation(fund.getId(), fund.getName(), contributorId, contributorName, amount);
+
+            if (donation != null) {
+                // update fund in local Org object
+                fund.addDonation(donation);
+
+                System.out.println("Donation successful!");
+                displayFund(fundNumber);
+            } else {
+                System.out.println("Failed to make donation.");
+
+            }
         } catch (Exception e) {
             System.out.println("Error making donation: " + e.getMessage());
-        }
-
-        if (success) {
-            System.out.println("Donation successful!");
-            displayFund(fundNumber);
-        } else {
-            System.out.println("Failed to make donation.");
         }
     }
 
@@ -186,7 +190,7 @@ public class UserInterface {
             return;
         }
         try {
-            boolean success = dataManager.changePassword(org.getId(), currentPassword, newPassword1);
+            boolean success = dataManager.changePassword(org.getId(), login, currentPassword, newPassword1);
             if (success) {
                 System.out.println("You have successfully changed the password!");
             } else {
@@ -325,7 +329,7 @@ public class UserInterface {
         for (Donation donation : allDonations) {
             ZonedDateTime parsedDate = ZonedDateTime.parse(donation.getDate(), inputFormatter);
             String formattedDate = parsedDate.format(outputFormatter);
-            System.out.println("Fund: " + donation.getFundId() + ", Amount: $" + donation.getAmount() + ", Date: " + formattedDate);
+            System.out.println("Fund: " + donation.getFundName() + ", Amount: $" + donation.getAmount() + ", Date: " + formattedDate);
         }
         waitForEnter();
     }
@@ -460,9 +464,7 @@ public class UserInterface {
     }
 
     // Task 3.1
-    private static Organization createOrgUI() {
-        final Scanner in = new Scanner(System.in);
-        DataManager ds = new DataManager(new WebClient("localhost", 3001));
+    private Organization createOrgUI() {
         while (true) {
             String login;
             do {
@@ -501,14 +503,14 @@ public class UserInterface {
             } while (description.isEmpty());
 
             try {
-                Organization newOrg = ds.createOrganization(login, password, orgName, description);
+                Organization newOrg = dataManager.createOrganization(login, password, orgName, description);
 
                 System.out.println("Organization created successfully!");
                 System.out.println("Name: " + newOrg.getName());
                 System.out.println("Description: " + newOrg.getDescription());
                 return newOrg;
             } catch (IllegalStateException | IllegalArgumentException e) {
-                System.out.println("Failed to create Organization: "  + e.getMessage());
+                System.out.println("Failed to create Organization: " + e.getMessage());
             } catch (Exception e) {
                 System.out.println("Error in communicating with server");
             }
@@ -526,7 +528,6 @@ public class UserInterface {
     public void createOrLoginUI() {
         while (true) {
             System.out.println("Create an  organization or Log in?(enter 'C' or 'L')");
-            final Scanner in = new Scanner(System.in);
             String answer = in.nextLine().trim();
             if ("C".equalsIgnoreCase(answer)) {
                 org = createOrgUI();

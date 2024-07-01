@@ -112,7 +112,7 @@ public class DataManager_createOrganization_Test {
             @Override
             public String makeRequest(String resource, Map<String, Object> queryParams) {
 
-                return "{\"status\":\"error\",\"data\":{\"driver\":true,\"name\":\"MongoError\",\"index\":0,\"code\":11001,\"keyPattern\":{\"login\":1},\"keyValue\":{\"login\":\"1\"}}}";
+                return "{\"status\":\"error\",\"data\":{\"driver\":true,\"name\":\"MongoError\",\"index\":0,\"code\":11001}}";
 
             }
 
