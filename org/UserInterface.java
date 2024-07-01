@@ -424,16 +424,16 @@ public class UserInterface {
         String login = in.nextLine();
         System.out.println("enter password");
         String password = in.nextLine();
-        org = attemptLogIn(login, password, dataManager);
+        org = attemptLogIn(login, password);
     }
 
     // Task 2.8
-    private static Organization attemptLogIn(String login, String password, DataManager ds) {
+    private Organization attemptLogIn(String login, String password) {
 
         Organization org = null;
         while (true) {
             try {
-                org = ds.attemptLogin(login, password);
+                org = dataManager.attemptLogin(login, password);
                 if (org != null) {
                     System.out.println("Login successful!");
                     return org;
@@ -552,7 +552,7 @@ public class UserInterface {
         } else {
             String login = args[0];
             String password = args[1];
-            Organization org = attemptLogIn(login, password, ds);
+            Organization org = ui.attemptLogIn(login, password);
             ui.org = org;
         }
 
