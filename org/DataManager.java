@@ -144,42 +144,6 @@ public class DataManager {
         }
     }
 
-    // Task 3.1 Organization App new user registration
-    public Organization createOrganization(String login, String password, String name, String description) throws ParseException {
-        if (login == null || login.isEmpty()
-                || password == null || password.isEmpty()
-                || name == null || name.isEmpty()
-                || description == null || description.isEmpty()) {
-            throw new IllegalArgumentException("Arguments cannot be empty");
-        }
-
-        Map<String, Object> map = new HashMap<>();
-        map.put("login", login);
-        map.put("password", password);
-        map.put("name", name);
-        map.put("description", description);
-        String response = client.makeRequest("/createOrg", map);
-        if (response == null) {
-            throw new IllegalStateException("Error in communicating with server");
-        }
-        JSONParser parser = new JSONParser();
-        JSONObject json = (JSONObject) parser.parse(response);
-        String status = (String) json.get("status");
-
-        if ("success".equals(status)) {
-            JSONObject orgData = (JSONObject) json.get("data");
-            String id = (String) orgData.get("_id");
-            return new Organization(id, name, description);
-        } else { // status.equals("error")
-            JSONObject err = (JSONObject) json.get("data");
-            String errorCode = String.valueOf(err.get("code"));
-            if ("11000".equals(errorCode)) {
-                throw new IllegalStateException("login already exists");
-            } else {
-                throw new IllegalStateException("Error in communicating with server error code: " + errorCode);
-            }
-        }
-    }
 
     /**
      * This method creates a new fund in the database using the /createFund endpoint in the API
@@ -249,6 +213,44 @@ public class DataManager {
         }
     }
 
+
+    // Task 3.1 Organization App new user registration
+    public Organization createOrganization(String login, String password, String name, String description) throws ParseException {
+        if (login == null || login.isEmpty()
+                || password == null || password.isEmpty()
+                || name == null || name.isEmpty()
+                || description == null || description.isEmpty()) {
+            throw new IllegalArgumentException("Arguments cannot be empty");
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("login", login);
+        map.put("password", password);
+        map.put("name", name);
+        map.put("description", description);
+        String response = client.makeRequest("/createOrg", map);
+        if (response == null) {
+            throw new IllegalStateException("Error in communicating with server");
+        }
+        JSONParser parser = new JSONParser();
+        JSONObject json = (JSONObject) parser.parse(response);
+        String status = (String) json.get("status");
+
+        if ("success".equals(status)) {
+            JSONObject orgData = (JSONObject) json.get("data");
+            String id = (String) orgData.get("_id");
+            return new Organization(id, name, description);
+        } else { // status.equals("error")
+            JSONObject err = (JSONObject) json.get("data");
+            String errorCode = String.valueOf(err.get("code"));
+            if ("11000".equals(errorCode)) {
+                throw new IllegalStateException("login already exists");
+            } else {
+                throw new IllegalStateException("Error in communicating with server error code: " + errorCode);
+            }
+        }
+    }
+
     // Task 3.2
     public boolean changePassword(String orgId, String currentPassword, String newPassword) {
         if (orgId == null || currentPassword == null || newPassword == null) {
@@ -270,13 +272,19 @@ public class DataManager {
             JSONObject json = (JSONObject) parser.parse(response);
             String status = (String) json.get("status");
 
-            return status.equals("success");
+            boolean isSuccess = "success".equals(status);
+
+            if (isSuccess) {
+                // Invalidate cache with old password
+                organizationCache.remove(List.of(orgId, currentPassword));
+            }
+            return isSuccess;
 
         } catch (Exception e) {
             throw new IllegalStateException("Error in communicating with server", e);
         }
     }
-    
+
     //3.3
     public boolean updateOrganizationInfo(String orgId, String name, String description) {
 
@@ -293,7 +301,7 @@ public class DataManager {
 //            // Print the map for debugging
 //            System.out.println("Request payload: " + map);
 
-            String response = client.makeRequest("/updateOrgInfo", map); 
+            String response = client.makeRequest("/updateOrgInfo", map);
             if (response == null) {
                 throw new IllegalStateException();
             }
@@ -308,7 +316,7 @@ public class DataManager {
             throw new IllegalStateException("Error in communicating with server", e);
         }
     }
-    
+
     //3.3
     public String getOrgLoginById(String orgId) {
         if (orgId == null) {
@@ -337,8 +345,8 @@ public class DataManager {
             throw new IllegalStateException("Error in communicating with server", e);
         }
     }
-    
-    
+
+
     //3.4
     public boolean contributorExists(String contributorId) {
         try {
@@ -358,7 +366,6 @@ public class DataManager {
 
         } catch (Exception e) {
             System.out.println("Error in contributorExists: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -405,7 +412,6 @@ public class DataManager {
 
         } catch (Exception e) {
             System.out.println("Error in makeDonation: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -419,7 +425,7 @@ public class DataManager {
             }
         }
         return null;
-    
+
     }
- 
+
 }
