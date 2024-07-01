@@ -180,13 +180,34 @@ public class UserInterface {
         String currentPassword = in.nextLine();
 
         // todo try catch
-        String login = dataManager.getOrgLoginById(org.getId());
+        String login = null;
+        try {
+            login = dataManager.getOrgLoginById(org.getId());
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid organization ID provided.");
+            return;
+        } catch (IllegalStateException e) {
+            System.out.println("Error in communicating with server while fetching login information.");
+            return;
+        }
 
         // todo try catch
-        if (dataManager.attemptLogin(login, currentPassword) == null) {
+        Organization orgAttempt = null;
+        try {
+            orgAttempt = dataManager.attemptLogin(login, currentPassword);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid login credentials provided.");
+            return;
+        } catch (IllegalStateException e) {
+            System.out.println("Error in communicating with server while attempting login.");
+            return;
+        }
+
+        if (orgAttempt == null) {
             System.out.println("Incorrect password. Returning to main menu.");
             return;
         }
+
         System.out.println("Enter new password: ");
         String newPassword1 = in.nextLine();
         System.out.println("Re-enter new password: ");
