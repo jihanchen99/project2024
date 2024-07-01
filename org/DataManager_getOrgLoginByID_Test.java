@@ -1,6 +1,9 @@
 import org.junit.Test;
-import java.util.*;
+
+import java.util.Map;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class DataManager_getOrgLoginByID_Test {
     @Test
@@ -23,7 +26,7 @@ public class DataManager_getOrgLoginByID_Test {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void nullResponse(){
+    public void nullResponse() {
         DataManager dm = new DataManager(new WebClient("localhost", 3001) {
             @Override
             public String makeRequest(String resource, Map<String, Object> queryParams) {
@@ -42,7 +45,7 @@ public class DataManager_getOrgLoginByID_Test {
             }
         });
         String login = dm.getOrgLoginById("orgID");
-        assertEquals(null, login);
+        assertNull(login);
     }
 
 }

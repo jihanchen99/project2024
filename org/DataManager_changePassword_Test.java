@@ -1,30 +1,32 @@
 import org.junit.Test;
-import static org.junit.Assert.*;
-import java.util.*;
+
+import java.util.Map;
+
+import static org.junit.Assert.assertTrue;
 
 public class DataManager_changePassword_Test {
     @Test(expected = IllegalArgumentException.class)
     public void testNullOrgID() {
         DataManager dm = new DataManager(new WebClient("localhost", 3001));
-        dm.changePassword(null,"login", "currentP", "newP");
+        dm.changePassword(null, "login", "currentP", "newP");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testNullLogin() {
         DataManager dm = new DataManager(new WebClient("localhost", 3001));
-        dm.changePassword("orgID",null, "currentP", "newP");
+        dm.changePassword("orgID", null, "currentP", "newP");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testNullCurrentPassword() {
         DataManager dm = new DataManager(new WebClient("localhost", 3001));
-        dm.changePassword("orgID","login", null, "newP");
+        dm.changePassword("orgID", "login", null, "newP");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testNullNewPassword() {
         DataManager dm = new DataManager(new WebClient("localhost", 3001));
-        dm.changePassword("orgID","login", "currentP", null);
+        dm.changePassword("orgID", "login", "currentP", null);
     }
 
     @Test(expected = IllegalStateException.class)
