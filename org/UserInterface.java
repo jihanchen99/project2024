@@ -154,12 +154,9 @@ public class UserInterface {
         try {
             String contributorName = dataManager.getContributorName(contributorId);
 
-            donation = dataManager.makeDonation(fund.getId(), fund.getName(), contributorId, contributorName, amount);
+            donation = dataManager.makeDonation(fund, contributorId, contributorName, amount);
 
             if (donation != null) {
-                // update fund in local Org object
-                fund.addDonation(donation);
-
                 System.out.println("Donation successful!");
                 displayFund(fundNumber);
             } else {

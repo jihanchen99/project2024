@@ -380,14 +380,14 @@ public class DataManager {
     }
 
     //3.4
-    public Donation makeDonation(String fundId, String fundName, String contributorId, String contributorName, long amount) {
-        if (fundId == null || contributorId == null || amount < 0) {
+    public Donation makeDonation(Fund fund, String contributorId, String contributorName, long amount) {
+        if (fund == null || contributorId == null || amount < 0) {
             throw new IllegalArgumentException("Invalid input parameters");
         }
 
         try {
             Map<String, Object> map = new HashMap<>();
-            map.put("fund", fundId);
+            map.put("fund", fund.getId());
             map.put("contributor", contributorId);
             map.put("amount", amount);
 
@@ -408,12 +408,14 @@ public class DataManager {
                 JSONObject donationData = (JSONObject) json.get("data");
                 String date = (String) donationData.get("date");
 
-                Donation newDonation = new Donation(fundId, fundName, contributorName, amount, date);
+                Donation newDonation = new Donation(fund.getId(), fund.getName(), contributorName, amount, date);
+                // update fund in local Org object
+                fund.addDonation(newDonation);
+
 //                Fund fund = findFundById(fundId);
 //                if (fund != null) {
 //                    fund.addDonation(newDonation);
 //                }
-
                 return newDonation;
             }
 
