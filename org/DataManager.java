@@ -262,7 +262,7 @@ public class DataManager {
 
     // Task 3.2
     public boolean changePassword(String orgId, String login, String currentPassword, String newPassword) {
-        if (orgId == null || currentPassword == null || newPassword == null) {
+        if (orgId == null || login == null || currentPassword == null || newPassword == null) {
             throw new IllegalArgumentException();
         }
 
