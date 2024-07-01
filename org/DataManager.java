@@ -238,10 +238,19 @@ public class DataManager {
 
         if ("success".equals(status)) {
             JSONObject orgData = (JSONObject) json.get("data");
+            if (orgData == null) {
+                throw new IllegalStateException("Internal server error");
+            }
             String id = (String) orgData.get("_id");
+            if (id == null) {
+                throw new IllegalStateException("Internal server error");
+            }
             return new Organization(id, name, description);
         } else { // status.equals("error")
             JSONObject err = (JSONObject) json.get("data");
+            if (err == null) {
+                throw new IllegalStateException("Internal server error");
+            }
             String errorCode = String.valueOf(err.get("code"));
             if ("11000".equals(errorCode)) {
                 throw new IllegalStateException("login already exists");

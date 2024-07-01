@@ -505,6 +505,9 @@ public class UserInterface {
             try {
                 Organization newOrg = dataManager.createOrganization(login, password, orgName, description);
 
+                if (newOrg == null) {
+                    throw new IllegalStateException("Error in communicating with server");
+                }
                 System.out.println("Organization created successfully!");
                 System.out.println("Name: " + newOrg.getName());
                 System.out.println("Description: " + newOrg.getDescription());

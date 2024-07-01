@@ -120,4 +120,58 @@ public class DataManager_createOrganization_Test {
         DataManager dm = new DataManager(wc);
         Organization org = dm.createOrganization("login", "password", "name", "description");
     }
+
+    @Test(expected = IllegalStateException.class)
+    public void testSuccessMissingData() throws org.json.simple.parser.ParseException {
+        WebClient wc = new WebClient("localhost", 3001) {
+
+
+            @Override
+            public String makeRequest(String resource, Map<String, Object> queryParams) {
+
+                return "{\"status\":\"success\"}";
+
+            }
+
+        };
+        DataManager dm = new DataManager(wc);
+        Organization org = dm.createOrganization("login", "password", "name", "description");
+    }
+
+
+    @Test(expected = IllegalStateException.class)
+    public void testErrorMissingData() throws org.json.simple.parser.ParseException {
+        WebClient wc = new WebClient("localhost", 3001) {
+
+
+            @Override
+            public String makeRequest(String resource, Map<String, Object> queryParams) {
+
+                return "{\"status\":\"error\"}";
+
+            }
+
+        };
+        DataManager dm = new DataManager(wc);
+        Organization org = dm.createOrganization("login", "password", "name", "description");
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testNullFundID() throws org.json.simple.parser.ParseException {
+        WebClient wc = new WebClient("localhost", 3001) {
+
+
+            @Override
+            public String makeRequest(String resource, Map<String, Object> queryParams) {
+
+                return "{\"status\":\"success\",\"data\":{\"target\":1,\"name\":\"1\",\"description\":\"1\",\"org\":\"6681ffbff068ad0047b1b60a\",\"donations\":[],\"__v\":0}}";
+
+            }
+
+        };
+        DataManager dm = new DataManager(wc);
+        Organization org = dm.createOrganization("login", "password", "name", "description");
+
+
+    }
 }
