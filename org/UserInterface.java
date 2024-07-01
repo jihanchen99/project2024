@@ -245,9 +245,9 @@ public class UserInterface {
                 System.out.println("Error in communicating with server.");
             }
 
-            System.out.print("Would you like to retry? (yes/no): ");
-            String retry = in.nextLine().trim().toLowerCase();
-            if (!retry.equals("yes")) {
+            System.out.print("Would you like to retry? (Y/N): ");
+            String retry = in.nextLine().trim();
+            if (!"Y".equalsIgnoreCase(retry)) {
                 return;
             }
         }
@@ -287,9 +287,9 @@ public class UserInterface {
                         return;
                     } catch (Exception e) {
                         System.out.println("Error creating fund: " + e.getMessage());
-                        System.out.print("Would you like to retry? (yes/no): ");
-                        String retry = in.nextLine().trim().toLowerCase();
-                        if (!retry.equals("yes")) {
+                        System.out.print("Would you like to retry? (Y/N): ");
+                        String retry = in.nextLine().trim();
+                        if (!"Y".equalsIgnoreCase(retry)) {
                             return;
                         }
                     }
@@ -372,9 +372,9 @@ public class UserInterface {
                 totalDonations += entry.getValue().getTotal();
             }
         } else if (displayOption == 3) {
-            System.out.println("Are you sure you want to delete this fund? Yes/No: ");
+            System.out.println("Are you sure you want to delete this fund? Y/N: ");
             String confirmation = in.nextLine();
-            if (confirmation.equalsIgnoreCase("yes")) {
+            if ("Y".equalsIgnoreCase(confirmation)) {
                 deleteFund(fundNumber);
             } else {
                 System.out.println("Deletion of fund cancelled.");
@@ -408,14 +408,16 @@ public class UserInterface {
                 System.out.println("Error in communicating with server.");
             }
 
-            System.out.print("Would you like to retry? (yes/no): ");
-            String retry = in.nextLine().trim().toLowerCase();
-            if (!retry.equals("yes")) {
+            System.out.print("Would you like to retry? (Y/N): ");
+            String retry = in.nextLine().trim();
+            if (!"Y".equals(retry)) {
                 return;
             }
+
         }
     }
 
+    // Task 2.8
     private void loginUI() {
         System.out.println("enter login");
         String login = in.nextLine();
@@ -424,6 +426,7 @@ public class UserInterface {
         org = attemptLogIn(login, password, dataManager);
     }
 
+    // Task 2.8
     private static Organization attemptLogIn(String login, String password, DataManager ds) {
 
         Organization org = null;
@@ -442,9 +445,9 @@ public class UserInterface {
                 System.out.println("Error in communicating with server.");
             }
 
-            System.out.print("Would you like to retry? (yes/no): ");
-            String retry = new Scanner(System.in).nextLine().trim().toLowerCase();
-            if (!retry.equals("yes")) {
+            System.out.print("Would you like to retry? (Y/N): ");
+            String retry = new Scanner(System.in).nextLine().trim();
+            if (!"Y".equalsIgnoreCase(retry)) {
                 return null;
             }
 
@@ -456,6 +459,7 @@ public class UserInterface {
 
     }
 
+    // Task 3.1
     private static Organization createOrgUI() {
         final Scanner in = new Scanner(System.in);
         DataManager ds = new DataManager(new WebClient("localhost", 3001));
@@ -518,7 +522,7 @@ public class UserInterface {
         }
     }
 
-
+    // Task 3.1
     public void createOrLoginUI() {
         while (true) {
             System.out.println("Create an  organization or Log in?(enter 'C' or 'L')");
