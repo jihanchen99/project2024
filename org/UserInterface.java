@@ -129,9 +129,14 @@ public class UserInterface {
             System.out.println("Contributor ID cannot be empty.");
             return;
         }
-
-        if (!dataManager.contributorExists(contributorId)) {
-            System.out.println("Contributor ID does not exist.");
+        try {
+            boolean isContributorExist = dataManager.contributorExists(contributorId);
+            if (!isContributorExist) {
+                System.out.println("Contributor ID does not exist.");
+                return;
+            }
+        } catch (Exception e) {
+            System.out.println("Error while finding contributor.");
             return;
         }
 
@@ -173,7 +178,11 @@ public class UserInterface {
     private void changePassword() {
         System.out.println("Enter current password: ");
         String currentPassword = in.nextLine();
+
+        // todo try catch
         String login = dataManager.getOrgLoginById(org.getId());
+
+        // todo try catch
         if (dataManager.attemptLogin(login, currentPassword) == null) {
             System.out.println("Incorrect password. Returning to main menu.");
             return;
@@ -205,8 +214,10 @@ public class UserInterface {
         System.out.print("Enter current password: ");
         String password = in.nextLine();
 
+        // todo try catch
         String login = dataManager.getOrgLoginById(org.getId());
 
+        // todo try catch
         if (dataManager.attemptLogin(login, password) == null) {
             System.out.println("Incorrect password. Returning to main menu.");
             return;

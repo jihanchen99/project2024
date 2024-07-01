@@ -374,8 +374,8 @@ public class DataManager {
             return status.equals("success");
 
         } catch (Exception e) {
-            System.out.println("Error in contributorExists: " + e.getMessage());
-            return false;
+//            System.out.println("Error in contributorExists: " + e.getMessage());
+            throw new IllegalStateException("Error in communicating with server", e);
         }
     }
 
@@ -391,14 +391,14 @@ public class DataManager {
             map.put("contributor", contributorId);
             map.put("amount", amount);
 
-            System.out.println("Making donation request with parameters: " + map);
+//            System.out.println("Making donation request with parameters: " + map);
 
             String response = client.makeRequest("/makeDonation", map);
             if (response == null) {
                 throw new IllegalStateException("Null response from server");
             }
 
-            System.out.println("Response from server: " + response);
+//            System.out.println("Response from server: " + response);
 
             JSONParser parser = new JSONParser();
             JSONObject json = (JSONObject) parser.parse(response);
