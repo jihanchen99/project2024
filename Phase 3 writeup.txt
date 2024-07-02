@@ -42,8 +42,8 @@ Jihan Chen:
   DataManager_contributorExists_Test.java
 
 Frank Liu:
-- Task 3.3:
-- Task 3.4:
+- Task 3.3: implemented the functionality of DataManager.java, UserInterface.java, and api.js
+- Task 3.4: implemented the functionality of DataManager.java, UserInterface.java, and api.js
 
 Yuhan Zhang:
 - Task 3.1
