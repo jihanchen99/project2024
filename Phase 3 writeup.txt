@@ -21,14 +21,17 @@ Task 3.2
 
 Task 3.3
 - added /updateOrgInfo in api.js
-- added updateOrganizationInfo in DataManager
-- added editOrganizationInfo in UserInterface
+- added updateOrganizationInfo in DataManager.java
+- added editOrganizationInfo in UserInterface.java
 - modified start()
 - added DataManager_updateOrganizationInfo_Test.java
 - added DataManager_getOrgLoginByID_Tess.java
 
 Task 3.4
-- (Frank)
+- updated /makeDonation in api.js
+- added makeDonation() in UserInterface.java
+- added makeDonation() in DataManager.java
+- modified start()
 - added DataManager_makeDonation_Test.java
 - added DataManager_contributorExists_Test.java
 
