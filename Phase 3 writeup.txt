@@ -17,15 +17,20 @@ Task 3.2
 - implemented changePassword() in DataManager.java
 - implemented changePassword() in UserInterface.java
 - modified start() in UserInterface to incorporate the change password option
+- added DataManager_changePassword_Test.java
 
 Task 3.3
-- add /updateOrgInfo in api.js
-- add updateOrganizationInfo in DataManager
-- add editOrganizationInfo in UserInterface
-- modify start()
+- added /updateOrgInfo in api.js
+- added updateOrganizationInfo in DataManager
+- added editOrganizationInfo in UserInterface
+- modified start()
+- added DataManager_updateOrganizationInfo_Test.java
+- added DataManager_getOrgLoginByID_Tess.java
 
 Task 3.4
-
+- (Frank)
+- added DataManager_makeDonation_Test.java
+- added DataManager_contributorExists_Test.java
 
 III. Team Contribution
 Jihan Chen:
