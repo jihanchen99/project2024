@@ -236,14 +236,32 @@ public class UserInterface {
         String password = in.nextLine();
 
         // todo try catch
-        String login = dataManager.getOrgLoginById(org.getId());
+        String login = null;
+        try {
+        	login = dataManager.getOrgLoginById(org.getId());
+        }catch (IllegalArgumentException e) {
+            System.out.println("Invalid organization ID provided.");
+            return;    
+        } catch (IllegalStateException e) {
+            System.out.println("Error in communicating with server while fetching login information.");
+            return;
+            }
 
         // todo try catch
+        
+        try {
         if (dataManager.attemptLogin(login, password) == null) {
             System.out.println("Incorrect password. Returning to main menu.");
             return;
         }
-
+        }catch (IllegalArgumentException e) {
+            System.out.println("Invalid login credentials provided.");
+            return;
+        } catch (IllegalStateException e) {
+            System.out.println("Error in communicating with server while attempting login.");
+            return;
+        }
+        
         System.out.println("Current organization name: " + org.getName());
         System.out.println("Current organization description: " + org.getDescription());
 
