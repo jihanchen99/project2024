@@ -28,8 +28,18 @@ Task 3.4
 
 
 III. Team Contribution
-Jihan Chen: 3.2 and all JUnit tests for 3.2, 3.3, 3.4
-Frank Liu: 3.3, 3.4
+Jihan Chen:
+- Task 3.2: implemented api.js, DataManager.java, UserInterface.java, and
+  DataManager_changePassword_Test.java
+- Task 3.3: implemented DataManager_updateOrganizationInfo_Test.java and
+  DataManager_getOrgLoginByID_Tess.java
+- Task 3.4: implemented DataManager_makeDonation_Test.java and
+  DataManager_contributorExists_Test.java
+
+Frank Liu:
+- Task 3.3:
+- Task 3.4:
+
 Yuhan Zhang:
 - Task 3.1
 - fix task 2.9 to show fund name by adding fundName in Donation.java and populating fundName at attemptLogin in DataManager.java
