@@ -47,9 +47,13 @@ Frank Liu:
 
 Yuhan Zhang:
 - Task 3.1
-- fix task 2.9 to show fund name by adding fundName in Donation.java and populating fundName at attemptLogin in DataManager.java
+- fix task 2.9 to show fund name by adding fundName in Donation.java and populating fundName
+  at attemptLogin in DataManager.java
 - Invalidate organizationCache after password changed in Task 3.2
-- Refactor makeDonation method by passing Fund object to avoid findFundById when adding donation into fund in Task 3.4
-- Clean up logs in DataManager.java and remove all user-unfriendly logs in UserInterface.java in Task 3.4
-- update all retry options from yes/no to y/n, and call ".equals" on a constant string to avoid NullPointerException
+- Refactor makeDonation method by passing Fund object to avoid findFundById when adding donation
+  into fund in Task 3.4
+- Clean up logs in DataManager.java and remove all user-unfriendly logs in UserInterface.java in
+  Task 3.4
+- update all retry options from yes/no to y/n, and call ".equals" on a constant string to avoid
+  NullPointerException
 - Review code and point out the code missing "try catch" in Task 3.2 & Task 3.3
